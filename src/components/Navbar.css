@@ -55,11 +55,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s var(--ease-spring);
-}
-
-.faisal-logo:hover .logo-mark {
-  transform: rotate(-6deg) scale(1.06);
 }
 
 .brand-logo-image {
@@ -153,14 +148,6 @@
   gap: 6px;
   margin-left: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.25s var(--ease-spring);
-}
-
-.nav-cta-btn:hover {
-  background: #ff8d6d;
-  color: #1a4f4d;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 18px rgba(255, 141, 109, 0.4);
 }
 
 /* ─── Mobile Responsiveness ─── */
