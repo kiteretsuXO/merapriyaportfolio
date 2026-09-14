@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Navbar.css';
 import { portfolioData } from '../data/portfolioData';
-import brandLogo from '../../flav dark.png';
+const brandLogo = '/flav dark.png';
 
 export default function Navbar({ onOpenContact }) {
   const [scrolled, setScrolled] = useState(false);
