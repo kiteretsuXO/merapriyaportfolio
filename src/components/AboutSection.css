@@ -1,0 +1,20 @@
+.framer-about-section {
+  padding-bottom: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-portrait-wrapper {
+  max-width: 908px;
+  width: 100%;
+  border-radius: 32px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+}
+
+.about-portrait-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}

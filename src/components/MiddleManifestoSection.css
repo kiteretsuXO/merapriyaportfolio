@@ -1,0 +1,147 @@
+.middle-manifesto-section {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+  background-color: #FFFFFF;
+  padding: 100px 0;
+  z-index: 5;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.manifesto-inner-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* Photo Box with Doodles — slide-up reveal */
+.manifesto-photo-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.manifesto-photo-wrapper.img-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.manifesto-img-box {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 0.9;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.4s ease, transform 0.4s var(--ease-spring);
+}
+
+.manifesto-img-box:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.14);
+  transform: scale(1.02);
+}
+
+.manifesto-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(105%);
+  transition: filter 0.5s ease;
+}
+
+.manifesto-img-box:hover .manifesto-portrait-img {
+  filter: grayscale(0%) contrast(100%);
+}
+
+.doodle-icon {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.top-left-doodle {
+  top: -30px;
+  left: -20px;
+  transform: rotate(-15deg);
+  animation: floatSoft 6s ease-in-out infinite;
+}
+
+.bottom-right-doodle {
+  bottom: -30px;
+  right: -20px;
+  transform: rotate(15deg);
+  animation: floatSoft 8s ease-in-out infinite 1s;
+}
+
+@keyframes floatSoft {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -8px; }
+}
+
+/* Manifesto Statement Text */
+.manifesto-text-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.manifesto-statement {
+  font-family: var(--font-family);
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #000000;
+}
+
+/* ─── Word-by-word reveal ─── */
+.word-span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(18px) skewY(3deg);
+  /* hidden by default, animated in when .word-in is added */
+}
+
+.word-span.word-in {
+  animation: wordReveal 0.55s cubic-bezier(0.16, 1, 0.3, 1) var(--word-delay, 0s) both;
+}
+
+@keyframes wordReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px) skewY(3deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) skewY(0deg);
+  }
+}
+
+.italic-problem {
+  font-family: var(--font-mono);
+  font-style: italic;
+  font-weight: 400;
+}
+
+@media (max-width: 900px) {
+  .manifesto-inner-container {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .manifesto-photo-wrapper {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}

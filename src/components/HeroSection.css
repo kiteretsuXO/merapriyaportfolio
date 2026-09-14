@@ -1,0 +1,294 @@
+.prasha-hero {
+  position: relative;
+  width: 100%;
+  background-color: #fcfaf4;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.prasha-hero-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 140px 24px 80px 24px;
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ─── Title blocks ─── */
+.prasha-title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+}
+
+.prasha-block {
+  padding: 16px 48px;
+  border-radius: 32px;
+  box-shadow: 4px 10px 0px rgba(0, 0, 0, 0.03);
+  transition: transform 0.5s var(--ease-spring);
+  /* Entrance: hidden via clip + opacity */
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+
+.prasha-block.revealed {
+  opacity: 1;
+  clip-path: inset(0 0% 0 0);
+  transition:
+    clip-path 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s ease,
+    transform 0.5s var(--ease-spring);
+}
+
+.prasha-block:hover {
+  transform: rotate(0deg) scale(1.02) !important;
+}
+
+.block-first {
+  background-color: #d8f3b9;
+  color: #1a4f4d;
+  z-index: 2;
+  margin-right: -20px;
+  transform: rotate(-3deg) translateY(-20px);
+  /* Entrance stagger: starts immediately */
+  transition-delay: 0s;
+}
+
+.block-first.revealed {
+  transition-delay: 0s;
+}
+
+.block-last {
+  background-color: #215b59;
+  color: #e4f1f5;
+  z-index: 1;
+  transform: rotate(2deg) translateY(20px);
+}
+
+.block-last.revealed {
+  /* Staggered 160ms later */
+  transition-delay: 0.16s;
+}
+
+.block-first h1,
+.block-last h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+/* ─── Description ─── */
+.prasha-desc {
+  max-width: 480px;
+  margin-top: 40px;
+  text-align: center;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.prasha-desc.revealed {
+  animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.italic-problem {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* ─── Shapes — NO animation here; transform is set inline ─── */
+.shape {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+
+.shape-pencil {
+  top: 15%;
+  left: 10%;
+  width: 300px;
+  /* float animation kept as subtle secondary motion */
+  animation: floatSoft 7s ease-in-out infinite;
+}
+
+.shape-cross {
+  bottom: 10%;
+  left: 15%;
+  width: 180px;
+  animation: floatSoft 8s ease-in-out infinite 1s;
+}
+
+.shape-star {
+  top: 30%;
+  right: 12%;
+  width: 200px;
+  animation: floatSoft 9s ease-in-out infinite 2s;
+}
+
+/* Soft floating — much subtler than before so parallax isn't fighting it */
+@keyframes floatSoft {
+
+  0%,
+  100% {
+    margin-top: 0px;
+  }
+
+  50% {
+    margin-top: -10px;
+  }
+}
+
+/* ─── Bottom section ─── */
+.prasha-hero-bottom {
+  background-color: #e4f1f5;
+  width: 100%;
+  padding: 100px 60px 140px 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 100px;
+  position: relative;
+  clip-path: polygon(0 60px, 60% 60px, 65% 0, 100% 0, 100% 100%, 0 100%);
+  margin-top: -60px;
+  will-change: transform;
+}
+
+.prasha-photo-container {
+  background-color: var(--bg-card);
+  padding: 12px;
+  border-radius: var(--radius-card);
+  transform: rotate(-2deg);
+  position: relative;
+  width: 340px;
+  flex-shrink: 0;
+  transition: transform 0.5s var(--ease-spring), box-shadow 0.5s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.prasha-photo-container:hover {
+  transform: rotate(0deg) scale(1.02);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.08);
+}
+
+.prasha-photo-container img {
+  width: 100%;
+  height: 380px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.metadata-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px 12px 12px;
+  text-align: left;
+}
+
+.metadata-card .t-meta {
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.metadata-card .t-meta:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.prasha-bottom-text {
+  max-width: 700px;
+  position: relative;
+}
+
+.prasha-bottom-text h2 {
+  /* Using global t-heading class instead of hardcoding */
+  color: #1a4f4d;
+  margin-top: 24px;
+  letter-spacing: -0.08em;
+}
+
+.shape-glasses {
+  position: absolute;
+  top: -60px;
+  left: -50px;
+  width: 140px;
+  transform: rotate(-15deg);
+  animation: floatSoft 5s ease-in-out infinite 1.5s;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .prasha-desc {
+    margin-top: 40px;
+  }
+
+  .prasha-hero-bottom {
+    gap: 60px;
+    flex-direction: column;
+    clip-path: none;
+    margin-top: 0;
+    padding-top: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .prasha-title-container {
+    flex-direction: column;
+    margin-top: 40px;
+  }
+
+  .block-first {
+    margin-right: 0;
+    margin-bottom: -20px;
+  }
+
+  .prasha-desc {
+    margin-top: 60px;
+    text-align: center;
+  }
+
+  .shape-pencil,
+  .shape-star,
+  .shape-cross {
+    opacity: 0.15;
+  }
+
+  .prasha-photo-container {
+    width: 280px;
+  }
+
+  .prasha-bottom-text h2 {
+    text-align: center;
+  }
+
+  .shape-glasses {
+    left: 50%;
+    transform: translateX(-50%) rotate(-15deg);
+  }
+}

@@ -1,0 +1,198 @@
+/* ==========================================================================
+   Header / Navbar — Light Mode Editorial Design System
+   Pill aesthetic: #1a4f4d deep pine teal, #d8f3b9 pastel lime, #ff8d6d coral
+   ========================================================================== */
+
+.faisal-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  padding: 24px 0;
+  transition: padding 0.35s ease, background 0.35s ease, backdrop-filter 0.35s ease;
+}
+
+.faisal-header.scrolled {
+  padding: 14px 0;
+  background: rgba(252, 250, 244, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(26, 79, 77, 0.08);
+}
+
+.faisal-header-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+}
+
+@media (max-width: 768px) {
+  .faisal-header-inner {
+    padding: 0 24px;
+  }
+}
+
+/* ─── Logo Block ─── */
+.faisal-logo {
+  font-family: var(--font-sans);
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.logo-mark {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s var(--ease-spring);
+}
+
+.faisal-logo:hover .logo-mark {
+  transform: rotate(-6deg) scale(1.06);
+}
+
+.brand-logo-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.logo-type {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.15;
+}
+
+.logo-type strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a4f4d;
+  letter-spacing: -0.03em;
+}
+
+.logo-type small {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #648280;
+}
+
+/* ─── Floating Navigation Pill ─── */
+.faisal-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #1a4f4d;
+  padding: 6px 6px 6px 20px;
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px rgba(26, 79, 77, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
+}
+
+.faisal-nav:hover {
+  box-shadow: 0 14px 36px rgba(26, 79, 77, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+}
+
+.nav-index {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #7ab2aa;
+  margin-right: 6px;
+  user-select: none;
+}
+
+.nav-link {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e4f1f5;
+  letter-spacing: 0.01em;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  text-decoration: none;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #d8f3b9;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Primary CTA Button */
+.nav-cta-btn {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a4f4d;
+  background: #d8f3b9;
+  padding: 10px 20px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s var(--ease-spring);
+}
+
+.nav-cta-btn:hover {
+  background: #ff8d6d;
+  color: #1a4f4d;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(255, 141, 109, 0.4);
+}
+
+/* ─── Mobile Responsiveness ─── */
+@media (max-width: 680px) {
+  .faisal-header {
+    padding: 12px 0;
+  }
+
+  .faisal-header-inner {
+    min-height: 48px;
+  }
+
+  .logo-mark {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logo-type small,
+  .nav-index,
+  .nav-link {
+    display: none;
+  }
+
+  .faisal-nav {
+    padding: 4px;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .nav-cta-btn {
+    padding: 9px 16px;
+    font-size: 0.76rem;
+    box-shadow: 0 4px 14px rgba(26, 79, 77, 0.2);
+  }
+}
