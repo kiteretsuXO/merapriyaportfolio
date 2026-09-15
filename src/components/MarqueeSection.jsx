@@ -66,45 +66,60 @@ export default function MarqueeSection() {
 
   // Normal elastic pull & snap-back spring loop
   useEffect(() => {
+    let isActive = true;
+
     const normalLoop = () => {
+      if (!isActive) return;
+
       if (mode === 'normal' || mode === 'pulling') {
+        const sp = springPull.current;
+        let isMoving = false;
+
         if (!isPointerDown.current) {
           // Spring recoil back to (0, 0)
           const k = 0.088;
           const damp = 0.8;
-          springPull.current.vx += -k * springPull.current.x;
-          springPull.current.vx *= damp;
-          springPull.current.x += springPull.current.vx;
+          sp.vx = (sp.vx - k * sp.x) * damp;
+          sp.x += sp.vx;
 
-          springPull.current.vy += -k * springPull.current.y;
-          springPull.current.vy *= damp;
-          springPull.current.y += springPull.current.vy;
+          sp.vy = (sp.vy - k * sp.y) * damp;
+          sp.y += sp.vy;
 
           if (
-            Math.abs(springPull.current.x) < 0.05 &&
-            Math.abs(springPull.current.vx) < 0.05 &&
-            Math.abs(springPull.current.y) < 0.05 &&
-            Math.abs(springPull.current.vy) < 0.05
+            Math.abs(sp.x) < 0.02 &&
+            Math.abs(sp.vx) < 0.02 &&
+            Math.abs(sp.y) < 0.02 &&
+            Math.abs(sp.vy) < 0.02
           ) {
-            springPull.current.x = 0;
-            springPull.current.vx = 0;
-            springPull.current.y = 0;
-            springPull.current.vy = 0;
+            sp.x = 0;
+            sp.vx = 0;
+            sp.y = 0;
+            sp.vy = 0;
+          } else {
+            isMoving = true;
           }
+        } else {
+          isMoving = true;
         }
 
-        const skew = Math.max(-8, Math.min(8, springPull.current.vx * -0.2));
-        setNormalSpring({
-          x: springPull.current.x,
-          y: springPull.current.y,
-          skew
+        const skew = Math.max(-8, Math.min(8, sp.vx * -0.2));
+
+        // Only update state if moving or transitioning back to exact rest (0,0,0)
+        setNormalSpring(prev => {
+          if (prev.x === sp.x && prev.y === sp.y && prev.skew === skew) {
+            return prev;
+          }
+          return { x: sp.x, y: sp.y, skew };
         });
       }
       normalRaf.current = requestAnimationFrame(normalLoop);
     };
 
     normalRaf.current = requestAnimationFrame(normalLoop);
-    return () => cancelAnimationFrame(normalRaf.current);
+    return () => {
+      isActive = false;
+      if (normalRaf.current) cancelAnimationFrame(normalRaf.current);
+    };
   }, [mode]);
 
   // Detonate / Explode chips into the air
@@ -181,10 +196,11 @@ export default function MarqueeSection() {
 
       const rect = wrapperRef.current.getBoundingClientRect();
       const arenaW = rect.width;
-      const arenaH = ARENA_HEIGHT;
-      const gravity = 0.12; // gentle floaty gravity
+      const arenaH = rect.height || ARENA_HEIGHT;
+      const gravity = 0.1; // floaty zero-gravity physics
       const airFriction = 0.99;
       const bounceDamp = 0.65;
+      const isMobile = arenaW < 600;
 
       let allRestored = true;
 
@@ -223,15 +239,15 @@ export default function MarqueeSection() {
           return chip;
         }
 
-        // Floating physics with soft levitation cushion near bottom
+        // Floating physics with responsive levitation cushion
         let vx = chip.vx * airFriction;
         let vy = chip.vy * airFriction + (gravity * dt);
 
-        // Gentle levitation lift so chips float and don't sink out of view
-        const bottomZone = arenaH - 55;
-        if (chip.y > bottomZone) {
-          const cushionFactor = (chip.y - bottomZone) / 55;
-          vy -= (gravity * 1.8 * cushionFactor) * dt;
+        // Anti-gravity buoyancy lift: as chips float into lower half, lift them back to middle
+        const midZone = arenaH * 0.45;
+        if (chip.y > midZone) {
+          const depth = Math.min(1.5, (chip.y - midZone) / (arenaH * 0.45));
+          vy -= (gravity * 2.6 * depth) * dt;
         }
 
         let x = chip.x + vx * dt;
@@ -240,17 +256,17 @@ export default function MarqueeSection() {
         let vrot = chip.vrot * 0.985;
 
         // Accurate bounding box calculation accounting for rotation to eliminate clipping!
-        const w = chip.type === 'star' ? 28 : 140;
-        const h = 28;
+        const w = chip.type === 'star' ? (isMobile ? 22 : 28) : (isMobile ? 110 : 140);
+        const h = isMobile ? 24 : 28;
         const rad = Math.abs((rot * Math.PI) / 180);
         const effectiveHalfH = Math.abs(Math.cos(rad)) * (h / 2) + Math.abs(Math.sin(rad)) * (w / 2);
         const effectiveHalfW = Math.abs(Math.cos(rad)) * (w / 2) + Math.abs(Math.sin(rad)) * (h / 2);
 
         // Bottom bounce
-        const maxBottom = arenaH - effectiveHalfH - 10;
+        const maxBottom = arenaH - effectiveHalfH - 12;
         if (y >= maxBottom) {
           y = maxBottom;
-          vy = -Math.abs(vy) * bounceDamp;
+          vy = -Math.abs(vy) * bounceDamp - (gravity * 2.0);
           vx *= 0.92;
           vrot *= 0.75;
           rot *= 0.9; // rotate back towards horizontal

@@ -1,44 +1,30 @@
 /* ========================================
-   Projects Section — List rows with floating preview
+   Projects Section
    ======================================== */
 
-.faisal-projects-section {
+.projects-section {
   width: 100%;
-  padding-top: 80px;
-  padding-bottom: 120px;
-  background: linear-gradient(to bottom, #F1E1DC, #FFF2E1);
+  padding: 100px 0 140px;
+  background: linear-gradient(160deg, #F1E1DC 0%, #FFF2E1 60%, #f5ede4 100%);
   position: relative;
-  overflow: hidden;
 }
 
-.projects-section-inner {
+.projects-inner {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1160px;
   margin: 0 auto;
   padding: 0 60px;
 }
 
-@media (max-width: 1024px) {
-  .projects-section-inner {
-    padding: 0 40px;
-  }
-}
-
-@media (max-width: 640px) {
-  .projects-section-inner {
-    padding: 0 24px;
-  }
-}
-
-/* Section Header — reveal */
+/* ---- Header ---- */
 .projects-header {
   display: flex;
   align-items: baseline;
   gap: 8px;
-  padding-bottom: 24px;
+  margin-bottom: 56px;
   opacity: 0;
-  transform: translateY(12px);
-  transition: opacity 0.5s ease, transform 0.5s var(--ease-spring);
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.55s var(--ease-spring);
 }
 
 .projects-header.revealed {
@@ -50,319 +36,201 @@
   font-family: var(--font-sans);
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--text-subtle);
+  color: #555;
 }
 
 .projects-count {
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: var(--text-subtle);
+  color: #555;
 }
 
-/* List wrapper */
-.projects-list {
+/* ---- Grid ---- */
+.projects-grid {
   display: flex;
   flex-direction: column;
-}
-
-/* Divider line */
-.row-divider {
-  width: 100%;
-  height: 1px;
-  background: var(--border);
-}
-
-/* Individual project row — scroll reveal */
-.project-row {
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-  opacity: 0;
-  transform: translateY(24px);
-}
-
-.project-row.revealed {
-  animation: rowReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) var(--row-delay, 0s) forwards;
-}
-
-@keyframes rowReveal {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Row inner layout — flex, constant stable height */
-.row-content {
-  display: flex;
-  align-items: center;
   gap: 24px;
-  padding: 24px 0;
 }
 
-/* Left: number + title info — grows to fill */
-.row-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex: 1;
-  min-width: 0;
-}
-
-.row-number {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 400;
-  color: var(--text-subtle);
-  letter-spacing: 0.08em;
-  flex-shrink: 0;
-  width: 24px;
-}
-
-.row-title-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  flex: 1;
-}
-
-.row-title {
-  font-family: var(--font-sans);
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  font-weight: 500;
-  color: var(--text);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-  transition: color 0.2s ease;
-  white-space: nowrap;
+/* ---- Card ---- */
+.project-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 20px;
   overflow: hidden;
-  text-overflow: ellipsis;
+  opacity: 0;
+  transform: translateY(36px);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
-.project-row:hover .row-title {
-  color: #1a4f4d;
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
 }
 
-.row-subtitle {
-  font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 400;
-  color: var(--text-subtle);
-  white-space: nowrap;
+.project-card.revealed {
+  animation: cardReveal 0.65s cubic-bezier(0.16, 1, 0.3, 1) var(--card-delay, 0s) forwards;
+}
+
+@keyframes cardReveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Alternate image side on odd cards */
+.project-card.card-odd {
+  direction: rtl;
+}
+.project-card.card-odd .card-body,
+.project-card.card-odd .card-image-wrap {
+  direction: ltr;
+}
+
+/* ---- Image ---- */
+.card-image-wrap {
   overflow: hidden;
-  text-overflow: ellipsis;
+  min-height: 300px;
 }
 
-/* Center tags — fixed width, does not grow/shrink */
-.row-tags {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-.row-tag {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  font-weight: 500;
-  color: #5c7b8e;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  padding: 4px 9px;
-  border-radius: 4px;
-  white-space: nowrap;
-  transition: border-color 0.2s ease;
-}
-
-.project-row:hover .row-tag {
-  border-color: rgba(0, 0, 0, 0.25);
-}
-
-/* Right: thumbnail + CTA — fixed, never grows */
-.row-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-}
-
-.row-thumb {
-  width: 80px;
-  height: 54px;
-  border-radius: 6px;
-  overflow: hidden;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  flex-shrink: 0;
-  transition: box-shadow 0.3s ease;
-}
-
-.project-row:hover .row-thumb {
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-}
-
-.row-thumb-img {
+.card-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.3s ease;
+  transition: transform 0.6s ease;
 }
 
-.project-row:hover .row-thumb-img {
+.project-card:hover .card-image {
   transform: scale(1.05);
 }
 
-.row-cta {
+/* ---- Body ---- */
+.card-body {
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: center;
+}
+
+/* Tags */
+.card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.card-tag {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.58rem;
   font-weight: 500;
-  color: var(--text-subtle);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  white-space: nowrap;
-  transition: color 0.2s ease, transform 0.2s ease;
+  color: #3a5a6e;
+  background: rgba(58, 90, 110, 0.08);
+  border: 1px solid rgba(58, 90, 110, 0.18);
+  padding: 3px 9px;
+  border-radius: 100px;
 }
 
-.project-row:hover .row-cta {
-  color: var(--text);
-  transform: translateX(4px);
+/* Title */
+.card-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-/* ========================================
-   Floating Preview — Jiggle, Tilt & Organic Hover
-   ======================================== */
-.floating-preview {
-  position: absolute;
-  width: clamp(290px, 25vw, 380px);
-  aspect-ratio: 1000 / 782;
-  pointer-events: none;
-  z-index: 60;
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.82) rotate(calc(var(--tilt, 0deg) - 3deg));
-  transition:
-    opacity 0.22s ease,
-    transform 0.35s cubic-bezier(0.34, 1.45, 0.7, 1);
-  will-change: transform, opacity, left, top;
+.card-title {
+  font-family: var(--font-sans);
+  font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+  font-weight: 700;
+  color: #111;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  transition: color 0.2s ease;
 }
 
-.floating-preview.visible {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1) rotate(var(--tilt, 0deg));
+.project-card:hover .card-title {
+  color: #1a3a38;
 }
 
-.floating-preview-card {
-  width: 100%;
-  height: 100%;
-  border-radius: 14px;
-  overflow: hidden;
-  position: relative;
-  background: #181c1c;
-  box-shadow:
-    0 26px 65px rgba(0, 0, 0, 0.28),
-    0 8px 22px rgba(0, 0, 0, 0.14),
-    0 0 0 1px rgba(255, 255, 255, 0.18);
-  will-change: transform, box-shadow;
+.card-subtitle {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.5;
 }
 
-/* Continuous lively jiggle & floating breathing motion */
-.floating-preview.visible .floating-preview-card {
-  animation: cardJiggle 2.8s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+/* Description */
+.card-description {
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: #555;
 }
 
-@keyframes cardJiggle {
-  0% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-    box-shadow:
-      0 26px 65px rgba(0, 0, 0, 0.28),
-      0 8px 22px rgba(0, 0, 0, 0.14),
-      0 0 0 1px rgba(255, 255, 255, 0.18);
+/* CTA */
+.card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  text-decoration: none;
+  margin-top: 4px;
+  padding: 10px 20px;
+  border-radius: 100px;
+  background: #111;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.card-cta:hover {
+  background: #1a3a38;
+  transform: translateY(-1px);
+}
+
+.card-cta-arrow {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+
+.card-cta:hover .card-cta-arrow {
+  transform: translate(2px, -2px);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .projects-inner { padding: 0 32px; }
+
+  .project-card,
+  .project-card.card-odd {
+    grid-template-columns: 1fr;
+    direction: ltr;
   }
-  20% {
-    transform: translateY(-7px) rotate(-2deg) scale(1.018);
-    box-shadow:
-      0 36px 85px rgba(0, 0, 0, 0.34),
-      0 12px 30px rgba(0, 0, 0, 0.18),
-      0 0 0 1px rgba(255, 255, 255, 0.24);
-  }
-  40% {
-    transform: translateY(-2px) rotate(1.5deg) scale(1.006);
-    box-shadow:
-      0 28px 70px rgba(0, 0, 0, 0.29),
-      0 9px 24px rgba(0, 0, 0, 0.15),
-      0 0 0 1px rgba(255, 255, 255, 0.2);
-  }
-  60% {
-    transform: translateY(5px) rotate(-1.4deg) scale(0.992);
-    box-shadow:
-      0 18px 46px rgba(0, 0, 0, 0.2),
-      0 6px 14px rgba(0, 0, 0, 0.11),
-      0 0 0 1px rgba(255, 255, 255, 0.16);
-  }
-  80% {
-    transform: translateY(-3px) rotate(1.2deg) scale(1.01);
-    box-shadow:
-      0 32px 76px rgba(0, 0, 0, 0.31),
-      0 10px 26px rgba(0, 0, 0, 0.16),
-      0 0 0 1px rgba(255, 255, 255, 0.22);
-  }
-  100% {
-    transform: translateY(0px) rotate(0deg) scale(1);
-    box-shadow:
-      0 26px 65px rgba(0, 0, 0, 0.28),
-      0 8px 22px rgba(0, 0, 0, 0.14),
-      0 0 0 1px rgba(255, 255, 255, 0.18);
-  }
-}
 
-/* Subtle glossy light highlight for tactile sticker/card sheen */
-.floating-preview-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.14) 0%,
-    rgba(255, 255, 255, 0.04) 40%,
-    transparent 65%
-  );
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-.floating-preview-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Responsive */
-@media (max-width: 840px) {
-  .row-tags {
-    display: none;
+  .card-image-wrap {
+    min-height: 220px;
+    order: -1;
   }
-  .floating-preview {
-    display: none !important;
-  }
+
+  .card-body { padding: 28px; }
 }
 
 @media (max-width: 600px) {
-  .row-cta {
-    display: none;
-  }
-
-  .row-thumb {
-    width: 60px;
-    height: 42px;
-  }
-
-  .row-content {
-    gap: 14px;
-    padding: 18px 0;
-  }
+  .projects-section { padding: 60px 0 100px; }
+  .projects-inner { padding: 0 20px; }
+  .projects-grid { gap: 16px; }
+  .project-card { border-radius: 16px; }
+  .card-body { padding: 22px 20px; }
+  .card-title { font-size: 1.6rem; }
+  .card-image-wrap { min-height: 180px; }
 }

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Lenis from 'lenis';
 import Navbar from './components/Navbar';
-import HeroSection from './components/HeroSection';
-import MarqueeSection from './components/MarqueeSection';
-import ProjectsSection from './components/ProjectsSection';
 import Footer from './components/Footer';
 import ContactModal from './components/ContactModal';
 import ProjectModal from './components/ProjectModal';
+import ScrollToTop from './components/ScrollToTop';
+
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
 
 export default function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -34,34 +36,39 @@ export default function App() {
   }, []);
 
   return (
-    <div className="portfolio-app">
-      {/* Top Header Bar */}
-      <Navbar onOpenContact={() => setIsContactOpen(true)} />
+    <BrowserRouter>
+      <ScrollToTop />
+      <div className="portfolio-app">
+        {/* Top Header Bar */}
+        <Navbar onOpenContact={() => setIsContactOpen(true)} />
 
-      <HeroSection />
+        {/* Dynamic Page Routes */}
+        <Routes>
+          <Route 
+            path="/" 
+            element={<HomePage onSelectProject={(project) => setSelectedProject(project)} />} 
+          />
+          <Route 
+            path="/about" 
+            element={<AboutPage onOpenContact={() => setIsContactOpen(true)} />} 
+          />
+        </Routes>
 
-      {/* Marquee band — sits between hero and projects */}
-      <MarqueeSection />
+        {/* Global Footer */}
+        <Footer onOpenContact={() => setIsContactOpen(true)} />
 
-      {/* Main Container */}
-      <main>
-        <ProjectsSection onSelectProject={(project) => setSelectedProject(project)} />
-      </main>
+        {/* Contact Modal Drawer */}
+        <ContactModal
+          isOpen={isContactOpen}
+          onClose={() => setIsContactOpen(false)}
+        />
 
-      {/* Footer */}
-      <Footer onOpenContact={() => setIsContactOpen(true)} />
-
-      {/* Contact Modal Drawer */}
-      <ContactModal
-        isOpen={isContactOpen}
-        onClose={() => setIsContactOpen(false)}
-      />
-
-      {/* Case Study Modal */}
-      <ProjectModal
-        project={selectedProject}
-        onClose={() => setSelectedProject(null)}
-      />
-    </div>
+        {/* Case Study Modal */}
+        <ProjectModal
+          project={selectedProject}
+          onClose={() => setSelectedProject(null)}
+        />
+      </div>
+    </BrowserRouter>
   );
 }

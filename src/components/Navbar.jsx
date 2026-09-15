@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import { portfolioData } from '../data/portfolioData';
 const brandLogo = '/flav dark.png';
@@ -6,6 +7,8 @@ const brandLogo = '/flav dark.png';
 export default function Navbar({ onOpenContact }) {
   const [scrolled, setScrolled] = useState(false);
   const { personalInfo } = portfolioData;
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -13,15 +16,31 @@ export default function Navbar({ onOpenContact }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleWorkClick = (e) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      const el = document.getElementById('work');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById('work');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
+  const handleLogoClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
     <header className={`faisal-header${scrolled ? ' scrolled' : ''}`}>
       <div className="faisal-header-inner">
         {/* Logo */}
-        <a
-          href="#top"
-          onClick={(e) => { e.preventDefault(); scrollToTop(); }}
+        <Link
+          to="/"
+          onClick={handleLogoClick}
           className="faisal-logo"
         >
           <span className="logo-mark">
@@ -31,13 +50,20 @@ export default function Navbar({ onOpenContact }) {
             <strong>{personalInfo.name}</strong>
             <small>{personalInfo.role}</small>
           </span>
-        </a>
+        </Link>
 
         {/* Nav Links */}
         <nav className="faisal-nav" aria-label="Primary navigation">
           <span className="nav-index">Index / 04</span>
-          <a href="#work" className="nav-link">Work</a>
-          <a href="#about" className="nav-link">About</a>
+          <a href="#work" onClick={handleWorkClick} className="nav-link">
+            Work
+          </a>
+          <Link 
+            to="/about" 
+            className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}
+          >
+            About
+          </Link>
           <button className="nav-cta-btn" onClick={onOpenContact}>
             Get in touch ↗
           </button>

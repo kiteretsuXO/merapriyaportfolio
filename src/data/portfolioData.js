@@ -1,21 +1,124 @@
 export const portfolioData = {
   personalInfo: {
     name: "Kalash Bawankar",
-    role: "UI/UX Designer",
-    subtag: "AVAILABLE FOR FREELANCE & FULL-TIME",
-    tagline: "Crafting digital experiences with precision & purpose.",
-    description: "I start with the problem, not the pixels.",
-    contactHeadline: "Let's make something that works.",
+    role: "UI/UX & Communication Designer",
+    subtag: "STUDYING B.DES @ SYMBIOSIS INSTITUTE OF DESIGN",
+    phone: "(+91) 86689 21405",
+    location: "Nagpur, IN",
+    tagline: "Obsessed with making complex digital systems feel effortless.",
+    description: "Communication Designer specializing in end-to-end UI/UX product design, high-fidelity interactive prototyping, spatial projection mapping, and developer-ready design systems.",
+    contactHeadline: "Let's build interfaces that solve real problems.",
     contactEmail: "kalash.52do@gmail.com",
+    education: {
+      degree: "Bachelor of Design (B.Des) in UI/UX Design",
+      institution: "Symbiosis Institute of Design, Nagpur",
+      period: "2023 — 2027"
+    },
     socialLinks: {
       linkedin: "https://www.linkedin.com/in/kalashbawankar",
       behance: "https://www.behance.net/kalashbawankar",
+      portfolio: "https://kalashbawankar.com",
       resume: "#"
     },
     heroImage: "https://framerusercontent.com/images/xmQdJcdHouhW6WDzzcvNI6a07I.png?width=1440&height=830",
     portraitBg: "/IMG.jpg",
     mugshot: "/IMG.jpg",
     aboutPortrait: "/IMG.jpg"
+  },
+
+  aboutDetails: {
+    badge: "02 / PROFILE & ARCHIVE",
+    headline: "Transforming ambiguous problems into pixel-accurate, human interfaces.",
+    bioParagraphs: [
+      "I'm Kalash Bawankar — a Communication Designer specializing in UI/UX Design at Symbiosis Institute of Design, Nagpur. I believe that good design isn't just about pretty pixels; it's about reducing friction between human intent and complex technology.",
+      "From designing 20+ NDA client screens during my internship at IB Group to securing a Top 10 finish in a 4-hour high-speed UI/UX hackathon, I thrive under real constraints. Outside the canvas, I experiment with spatial storytelling through projection-mapped visual media."
+    ],
+    stats: [
+      { value: "TOP 10", label: "GFG Hackathon" },
+      { value: "20+", label: "NDA Client Screens" },
+      { value: "4 HRS", label: "Rapid Prototype Speed" },
+      { value: "B.DES", label: "Symbiosis Design '27" }
+    ],
+    spotlightStories: [
+      {
+        id: "hackathon",
+        tag: "HIGH-SPEED PRESSURE TEST",
+        badgeColor: "#ff8d6d",
+        title: "GFG UI/UX Hackathon — Top 10 Finish",
+        metric: "4-Hour Sprint",
+        period: "JAN 2025",
+        summary: "Translated an ambiguous problem statement into structured user flows, wireframes, and a fully functional Figma prototype within 4 hours, beating out dozens of competing teams."
+      },
+      {
+        id: "ibgroup",
+        tag: "ENTERPRISE INTERNSHIP & NDA",
+        badgeColor: "#16697a",
+        title: "IB Group — UI/UX Designer Intern",
+        metric: "20+ Screens & Design System",
+        period: "SEPT — OCT 2025",
+        summary: "Mapped user flows for 3+ responsive web applications, conducted pre-design usability gap research, built reusable Figma component libraries, and delivered pixel-accurate dev handoffs."
+      },
+      {
+        id: "spatial",
+        tag: "SPATIAL MEDIA & PROJECTION",
+        badgeColor: "#b82b6c",
+        title: "Scene1Take1 Film Club — Spatial Projection Mapping",
+        metric: "Physical & Digital Fusion",
+        period: "JUNE & AUG 2026",
+        summary: "Designed and executed projection mapped visual environments, transforming physical architecture into interactive spatial storytelling spaces with synchronized audio-visuals."
+      },
+      {
+        id: "cossart",
+        tag: "BRAND IDENTITY LEAD",
+        badgeColor: "#d94214",
+        title: "Cossart '26 — Festival Visual Communication Lead",
+        metric: "Full Event Identity",
+        period: "FEB — MAR 2026",
+        summary: "Directed end-to-end visual identity for Cossart '26 college event — creating posters, environmental banners, social media design systems, and guest invitations."
+      }
+    ],
+    skills: {
+      "UI/UX Design Skills": [
+        "User Flow Mapping & Gap Research",
+        "Wireframing & Rapid Low-Fi Sketching",
+        "High-Fidelity Interactive Prototyping",
+        "Information Architecture (IA)",
+        "Reusable Figma Component Systems",
+        "Pixel-Accurate Developer Handoff"
+      ],
+      "Tools & Modern AI Workflow": [
+        "Figma & Variables / Tokens",
+        "Framer",
+        "Adobe Creative Suite (Photoshop/Illustrator)",
+        "ChatGPT (UX Copy & Wireframe Research)",
+        "Claude (Systematic Research & Prompts)",
+        "Gemini (Visual Workflow Optimization)"
+      ],
+      "Soft Skills & Execution": [
+        "Constraint-Based Problem Solving",
+        "Rapid Design Execution (4-Hour Sprints)",
+        "Spatial Storytelling & Composition",
+        "Cross-Functional Dev Collaboration",
+        "Attention to Micro-Details"
+      ]
+    },
+    education: {
+      degree: "Bachelor of Design (B.Des) in UI/UX Design",
+      institution: "Symbiosis Institute of Design, Nagpur",
+      period: "2023 — 2027",
+      focus: "Specializing in Communication Design, Ergonomic Digital Systems, Interaction Design & Spatial Media."
+    },
+    languages: [
+      { name: "English", level: "Professional Working Proficiency" },
+      { name: "Hindi", level: "Native / Bilingual" },
+      { name: "Marathi", level: "Native / Bilingual" }
+    ],
+    hobbies: [
+      { icon: "Camera", title: "Spatial Projection", desc: "Mapping physical environments with visual light" },
+      { icon: "Coffee", title: "Espresso & Focus", desc: "Fueling 4-hour rapid wireframe sprints" },
+      { icon: "Music", title: "Audio Sync & Sound", desc: "Creating synchronized audio-visual experiences" },
+      { icon: "BookOpen", title: "Design Systems", desc: "Studying token architecture & human factors" }
+    ]
   },
 
   projects: [
