@@ -159,7 +159,6 @@ export default function MusicPage() {
 
       {/* Hero Header */}
       <section className="music-hero">
-        <span className="music-hero-badge">Experimental Playground</span>
         <h1 className="music-hero-title">
           <span>junk</span> drawer
         </h1>

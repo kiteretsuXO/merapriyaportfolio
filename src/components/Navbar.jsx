@@ -65,10 +65,10 @@ export default function Navbar({ onOpenContact }) {
             About
           </Link>
           <Link 
-            to="/music" 
-            className={`nav-link${location.pathname === '/music' ? ' active' : ''}`}
+            to="/fun" 
+            className={`nav-link${location.pathname === '/fun' || location.pathname === '/music' ? ' active' : ''}`}
           >
-            Music
+            Fun
           </Link>
           <button className="nav-cta-btn" onClick={onOpenContact}>
             Get in touch ↗

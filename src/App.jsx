@@ -54,6 +54,10 @@ export default function App() {
             element={<AboutPage onOpenContact={() => setIsContactOpen(true)} />} 
           />
           <Route 
+            path="/fun" 
+            element={<MusicPage />} 
+          />
+          <Route 
             path="/music" 
             element={<MusicPage />} 
           />
