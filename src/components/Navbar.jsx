@@ -54,7 +54,7 @@ export default function Navbar({ onOpenContact }) {
 
         {/* Nav Links */}
         <nav className="faisal-nav" aria-label="Primary navigation">
-          <span className="nav-index">Index / 04</span>
+          <span className="nav-index">Index / 05</span>
           <a href="#work" onClick={handleWorkClick} className="nav-link">
             Work
           </a>
@@ -63,6 +63,12 @@ export default function Navbar({ onOpenContact }) {
             className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}
           >
             About
+          </Link>
+          <Link 
+            to="/music" 
+            className={`nav-link${location.pathname === '/music' ? ' active' : ''}`}
+          >
+            Music
           </Link>
           <button className="nav-cta-btn" onClick={onOpenContact}>
             Get in touch ↗

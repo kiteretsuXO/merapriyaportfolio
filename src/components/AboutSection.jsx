@@ -62,15 +62,7 @@ export default function AboutSection({ onOpenContact }) {
                 className="about-portrait-img"
               />
               
-              <div className="portrait-overlay-badge badge-top-right">
-                <MapPin size={13} className="pin-icon" />
-                <span>Nagpur, India</span>
-              </div>
-              
-              <div className="portrait-overlay-badge badge-bottom-left">
-                <span className="pulse-green-dot"></span>
-                <span>Symbiosis B.Des '27</span>
-              </div>
+              {/* removed location and education badges per request */}
             </div>
 
             {/* Quick Contact Chips */}
@@ -88,10 +80,7 @@ export default function AboutSection({ onOpenContact }) {
 
           {/* Right Narrative & Metrics */}
           <div className="about-bio-content">
-            <div className="bio-sub-badge">
-              <Sparkles size={14} />
-              <span>{personalInfo.subtag}</span>
-            </div>
+            {/* sub-badge removed per request */}
 
             <h3 className="bio-greeting">
               Communication Designer specializing in <span className="highlight-text">UI/UX & Interactive Systems</span>.

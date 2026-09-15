@@ -9,6 +9,7 @@ import ScrollToTop from './components/ScrollToTop';
 
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
+import MusicPage from './pages/MusicPage';
 
 export default function App() {
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -51,6 +52,10 @@ export default function App() {
           <Route 
             path="/about" 
             element={<AboutPage onOpenContact={() => setIsContactOpen(true)} />} 
+          />
+          <Route 
+            path="/music" 
+            element={<MusicPage />} 
           />
         </Routes>
 

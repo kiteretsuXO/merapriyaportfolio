@@ -20,7 +20,7 @@ export const portfolioData = {
       portfolio: "https://kalashbawankar.com",
       resume: "#"
     },
-    heroImage: "https://framerusercontent.com/images/xmQdJcdHouhW6WDzzcvNI6a07I.png?width=1440&height=830",
+    heroImage: "/IMG.jpg",
     portraitBg: "/IMG.jpg",
     mugshot: "/IMG.jpg",
     aboutPortrait: "/IMG.jpg"

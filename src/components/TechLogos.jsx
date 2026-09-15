@@ -24,32 +24,35 @@ export function FramerLogo({ size = 18, className = '' }) {
   );
 }
 
-// Official Adobe Creative Cloud App Badge (Red with White CC Infinity Loop)
+// Cleaner Adobe Creative Cloud-style badge
 export function AdobeLogo({ size = 18, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect width="24" height="24" rx="5" fill="#DA1F26"/>
-      <path d="M13.2 7.2c-1.8 0-3.3 1.5-3.3 3.3 0 .2.03.4.07.6-.9.2-1.5 1-1.5 2 0 1.1.9 2 2 2h5.5c1.1 0 2-.9 2-2 0-1-.7-1.8-1.7-2 .07-.2.1-.4.1-.6 0-1.8-1.5-3.3-3.3-3.3z" fill="#FFFFFF"/>
+      <rect width="24" height="24" rx="5" fill="#E24B39"/>
+      <path d="M8 17.2L10.8 6.8H13.2L16 17.2H13.7L12.9 14.8H11.1L10.3 17.2H8ZM11.3 12.8H12.7L12.1 9.9L11.3 12.8Z" fill="#FFFFFF"/>
     </svg>
   );
 }
 
-// Official ChatGPT / OpenAI App Badge (Teal with White Vortex)
+// Cleaner ChatGPT-style badge with a simple chat bubble + sparkle
 export function ChatGPTLogo({ size = 18, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <rect width="24" height="24" rx="5" fill="#10A37F"/>
-      <path d="M17.5 10.2a3.8 3.8 0 0 0-.3-2.5 3.8 3.8 0 0 0-3.3-1.8c-.3 0-.7.05-1 .15A3.8 3.8 0 0 0 10.3 5a3.8 3.8 0 0 0-3.6 2.6c-.3.1-.7.2-1 .4A3.8 3.8 0 0 0 5 11.5c0 1.2.6 2.3 1.5 3a3.8 3.8 0 0 0 .3 2.5 3.8 3.8 0 0 0 3.3 1.8c.3 0 .7-.05 1-.15a3.8 3.8 0 0 0 2.6 1.1 3.8 3.8 0 0 0 3.6-2.6c.3-.1.7-.2 1-.4a3.8 3.8 0 0 0 0-6.7zm-5.5 7.5a2.5 2.5 0 0 1-1.6-.6l.1-.1 2-1.1a.5.5 0 0 0 .2-.4v-3l.9.5v2.4a2.5 2.5 0 0 1-1.6 2.3zm-4.3-1.9a2.5 2.5 0 0 1-.3-1.7l.1.1 2 1.1a.5.5 0 0 0 .5 0l2.5-1.4v1l-2.1 1.2a2.5 2.5 0 0 1-2.7-.3zm-1.1-4.7a2.5 2.5 0 0 1 1.3-1.2v2.4a.5.5 0 0 0 .2.4l2.5 1.4-.9.5-2.1-1.2a2.5 2.5 0 0 1-1-2.3zm7.8-2l-2.5 1.4v-1l2.1-1.2a2.5 2.5 0 0 1 3 2.1l-.1-.1-2-1.1a.5.5 0 0 0-.5 0zm2 3.3a2.5 2.5 0 0 1-1.3 1.2v-2.4a.5.5 0 0 0-.2-.4l-2.5-1.4.9-.5 2.1 1.2a2.5 2.5 0 0 1 1 2.3zm-5.2-.8l.9-1.5.9 1.5v3l-.9 1.5-.9-1.5v-3z" fill="#FFFFFF"/>
+      <rect width="24" height="24" rx="5" fill="#12A37F"/>
+      <path d="M7.5 7.5C7.5 6.12 8.62 5 10 5H14C15.38 5 16.5 6.12 16.5 7.5V11.5C16.5 12.88 15.38 14 14 14H11.3L8.5 16.5V14H10C8.62 14 7.5 12.88 7.5 11.5V7.5Z" fill="#FFFFFF"/>
+      <circle cx="10.8" cy="9.3" r="0.8" fill="#12A37F"/>
+      <circle cx="13.2" cy="9.3" r="0.8" fill="#12A37F"/>
+      <path d="M10.8 11.1C11.3 11.5 12.7 11.5 13.2 11.1" stroke="#12A37F" strokeWidth="0.9" strokeLinecap="round"/>
     </svg>
   );
 }
 
-// Official Anthropic Claude App Badge (Terracotta with White Anthropic A Logo)
+// Cleaner Claude-style badge with a crisp A mark
 export function ClaudeLogo({ size = 18, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
       <rect width="24" height="24" rx="5" fill="#D97757"/>
-      <path d="M6.8 17.2L12 5.5l5.2 11.7h-2.3l-1.1-2.6H10.2l-1.1 2.6H6.8zm4.2-4.6h2l-1-2.4-1 2.4z" fill="#FFFFFF"/>
+      <path d="M7 17.2L11.2 6.8H12.8L17 17.2H14.8L14 14.9H10L9.2 17.2H7ZM10.5 12.8H13.5L12.4 9.8L10.5 12.8Z" fill="#FFFFFF"/>
     </svg>
   );
 }
