@@ -20,16 +20,23 @@ export default function HeroSection() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Mouse parallax
+  // Mouse parallax and cursor spotlight
   useEffect(() => {
     const handleMove = (e) => {
-      const rect = heroRef.current?.getBoundingClientRect();
-      if (!rect) return;
+      const el = heroRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
       const cx = rect.width / 2;
       const cy = rect.height / 2;
+      const relX = e.clientX - rect.left;
+      const relY = e.clientY - rect.top;
+
+      el.style.setProperty('--cursor-x', `${relX}px`);
+      el.style.setProperty('--cursor-y', `${relY}px`);
+
       setMouse({
-        x: (e.clientX - rect.left - cx) / cx,
-        y: (e.clientY - rect.top - cy) / cy,
+        x: (relX - cx) / cx,
+        y: (relY - cy) / cy,
       });
     };
     const el = heroRef.current;

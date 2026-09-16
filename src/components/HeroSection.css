@@ -2,15 +2,51 @@
   position: relative;
   width: 100%;
   background-color: #fcfaf4;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.11) 1.2px, transparent 1.2px);
-  background-size: 24px 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
+/* ─── Animated Floating Dot Matrix Background (GPU-accelerated) ─── */
+.prasha-hero::before {
+  content: '';
+  position: absolute;
+  inset: -48px;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.11) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  animation: dotCanvasDrift 28s linear infinite;
+  will-change: transform;
+}
+
+/* ─── Interactive Mouse Spotlight on Dots ─── */
+.prasha-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    circle 380px at var(--cursor-x, 50%) var(--cursor-y, 35%),
+    rgba(255, 74, 33, 0.055),
+    transparent 70%
+  );
+  transition: opacity 0.3s ease;
+}
+
+@keyframes dotCanvasDrift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(24px, 24px, 0);
+  }
+}
+
 .prasha-hero-inner {
   position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 1440px;
   margin: 0 auto;
@@ -173,8 +209,6 @@
 /* ─── Bottom section ─── */
 .prasha-hero-bottom {
   background-color: #e4f1f5;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1.2px, transparent 1.2px);
-  background-size: 24px 24px;
   width: 100%;
   padding: 100px 60px 140px 60px;
   display: flex;
@@ -183,8 +217,23 @@
   align-items: center;
   gap: 100px;
   position: relative;
+  z-index: 2;
   clip-path: polygon(0 60px, 60% 60px, 65% 0, 100% 0, 100% 100%, 0 100%);
   margin-top: -60px;
+  overflow: hidden;
+  will-change: transform;
+}
+
+/* Animated Dots Behind the Photo Card */
+.prasha-hero-bottom::before {
+  content: '';
+  position: absolute;
+  inset: -48px;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
+  animation: dotCanvasDrift 28s linear infinite;
   will-change: transform;
 }
 
@@ -201,6 +250,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
 }
 
 .prasha-photo-container:hover {
