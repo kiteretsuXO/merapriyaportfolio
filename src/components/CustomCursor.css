@@ -1,182 +1,178 @@
 /* ==========================================================================
-   Custom Designer Cursor Styles
-   Smooth physics, contextual morphing & tactile micro-interactions
+   Figma Multiplayer & Design Inspector Cursor
+   Authentic designer tool aesthetic with live HUD & element inspection
    ========================================================================== */
 
-/* ── Hide native cursor on desktop pointer devices only ── */
+/* ── Hide native browser arrow on desktop pointer devices ── */
 @media (hover: hover) and (pointer: fine) {
-  body.custom-cursor-enabled,
-  body.custom-cursor-enabled a,
-  body.custom-cursor-enabled button,
-  body.custom-cursor-enabled [role="button"],
-  body.custom-cursor-enabled .about-sticker {
+  body.figma-cursor-enabled,
+  body.figma-cursor-enabled a,
+  body.figma-cursor-enabled button,
+  body.figma-cursor-enabled [role="button"],
+  body.figma-cursor-enabled .about-sticker,
+  body.figma-cursor-enabled .nav-link,
+  body.figma-cursor-enabled .project-card {
     cursor: none !important;
   }
 
-  body.custom-cursor-enabled input,
-  body.custom-cursor-enabled textarea {
+  body.figma-cursor-enabled input,
+  body.figma-cursor-enabled textarea {
     cursor: text !important;
   }
 }
 
-/* ── Root Container ── */
-.custom-cursor-root {
+/* ── Main Cursor Container ── */
+.figma-cursor-container {
   position: fixed;
   top: 0;
   left: 0;
-  width: 0;
-  height: 0;
   pointer-events: none;
-  z-index: 9999999;
+  z-index: 10000000;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  will-change: transform;
+  transition: opacity 0.2s ease, transform 0.08s ease;
 }
 
-.custom-cursor-root.is-visible {
+.figma-cursor-container.is-visible {
   opacity: 1;
 }
 
-/* ── Center Precision Dot ── */
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: var(--accent, #ff4a21);
-  box-shadow: 0 0 12px rgba(255, 74, 33, 0.55);
-  pointer-events: none;
-  z-index: 10000001;
-  transition: 
-    width 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-    height 0.2s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.2s ease,
-    background-color 0.2s ease;
-}
-
-.cursor-dot.state-pointer {
-  width: 5px;
-  height: 5px;
-  opacity: 0.8;
-}
-
-/* Hide dot when morphing into full lens or typing */
-.cursor-dot.state-view,
-.cursor-dot.state-drag,
-.cursor-dot.state-copy,
-.cursor-dot.state-input {
+.figma-cursor-container.is-input-mode {
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.3);
 }
 
-.cursor-dot.is-clicking {
-  transform: translate(-50%, -50%) scale(0.65);
+.figma-cursor-container.is-clicking {
+  transform: scale(0.92) rotate(-3deg);
 }
 
-/* ── Outer Trailing Ring / Lens ── */
-.cursor-ring {
-  position: fixed;
+/* ── Figma Designer Pointer Arrow (SVG) ── */
+.figma-arrow-wrapper {
+  position: absolute;
   top: 0;
   left: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22));
+}
+
+.figma-arrow-svg {
+  display: block;
+}
+
+/* ── Tag Cluster (Multiplayer Badge + HUD) ── */
+.figma-tag-cluster {
+  position: absolute;
+  top: 13px;
+  left: 13px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  pointer-events: none;
-  z-index: 10000000;
-  width: 36px;
-  height: 36px;
-  border: 1.5px solid rgba(255, 74, 33, 0.45);
-  background: rgba(255, 74, 33, 0.04);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
-  transition: 
-    width 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-    height 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 0.25s ease,
-    border-color 0.25s ease,
-    box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.2s ease;
-}
-
-/* State: Pointer / Hovering Link or Button */
-.cursor-ring.state-pointer {
-  width: 52px;
-  height: 52px;
-  border-color: var(--accent, #ff4a21);
-  background: rgba(255, 74, 33, 0.08);
-  box-shadow: 0 8px 24px rgba(255, 74, 33, 0.16);
-}
-
-/* State: Project Card Hover ("VIEW ↗") */
-.cursor-ring.state-view {
-  width: 76px;
-  height: 76px;
-  background-color: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-
-/* State: Draggable Sticker Hover ("DRAG ✦") */
-.cursor-ring.state-drag {
-  width: 78px;
-  height: 78px;
-  background-color: var(--accent, #ff4a21);
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 16px 36px rgba(255, 74, 33, 0.35);
-}
-
-/* State: Copy Email / Text ("COPY") */
-.cursor-ring.state-copy {
-  width: 66px;
-  height: 66px;
-  background-color: #10b981;
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 12px 28px rgba(16, 185, 129, 0.32);
-}
-
-/* State: Text Input Focus (Cleanly fade out) */
-.cursor-ring.state-input {
-  opacity: 0;
-  width: 18px;
-  height: 18px;
-}
-
-/* Clicking / Press state micro-bounce */
-.cursor-ring.is-clicking {
-  width: 30px;
-  height: 30px;
-  background: rgba(255, 74, 33, 0.18);
-}
-
-.cursor-ring.state-view.is-clicking,
-.cursor-ring.state-drag.is-clicking {
-  width: 68px;
-  height: 68px;
-}
-
-/* ── Contextual Text Label ── */
-.cursor-label {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #ffffff;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
   pointer-events: none;
   user-select: none;
-  white-space: nowrap;
-  animation: cursorLabelIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes cursorLabelIn {
-  from {
-    opacity: 0;
-    transform: scale(0.7);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* ── Multiplayer Name Tag (Signature Figma Shape) ── */
+.figma-name-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 7px;
+  background-color: var(--accent, #ff4a21);
+  color: #ffffff;
+  border-radius: 0 7px 7px 7px;
+  font-family: var(--font-sans, 'Space Grotesk', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  box-shadow: 0 3px 10px rgba(255, 74, 33, 0.3), 0 1px 3px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.figma-tag-text {
+  letter-spacing: 0.01em;
+}
+
+.figma-tag-tool {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: rgba(0, 0, 0, 0.22);
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+/* ── Coordinate Readout HUD ── */
+.figma-coords-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  background: rgba(17, 17, 17, 0.82);
+  color: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.coord-val {
+  white-space: nowrap;
+}
+
+/* ── Element Spec Inspection Pill ── */
+.figma-spec-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 6px;
+  background: #0c8ce9;
+  color: #ffffff;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  box-shadow: 0 4px 12px rgba(12, 140, 233, 0.35);
+  white-space: nowrap;
+}
+
+.spec-label {
+  opacity: 0.85;
+  font-size: 0.55rem;
+}
+
+.spec-dims {
+  font-weight: 700;
+}
+
+/* ── Figma Inspection Bounding Box on Hovered Element ── */
+.figma-inspect-bounding-box {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999997;
+  border: 1px dashed rgba(12, 140, 233, 0.85);
+  background: rgba(12, 140, 233, 0.03);
+  border-radius: 4px;
+  transition: top 0.08s ease-out, left 0.08s ease-out, width 0.08s ease-out, height 0.08s ease-out;
+}
+
+.figma-dimension-badge {
+  position: absolute;
+  top: -16px;
+  left: 0;
+  background: #0c8ce9;
+  color: #ffffff;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 2px;
+  line-height: 1.2;
+  white-space: nowrap;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }

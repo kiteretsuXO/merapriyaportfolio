@@ -1,90 +1,103 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useMotionValue } from 'framer-motion';
 import './CustomCursor.css';
 
 export default function CustomCursor() {
-  const [cursorState, setCursorState] = useState('default'); // 'default' | 'pointer' | 'view' | 'drag' | 'copy' | 'input'
-  const [cursorText, setCursorText] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [hoverSpec, setHoverSpec] = useState(null); // { label: string, width: number, height: number }
   const [isClicking, setIsClicking] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  // Direct mouse coordinates for precise center dot
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  // Smooth spring physics for fluid trailing ring
-  const springConfig = { damping: 28, stiffness: 380, mass: 0.45 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
+  // Reference for inspection bounding box
+  const [inspectBox, setInspectBox] = useState(null);
 
   useEffect(() => {
-    // Disable on touch devices or screens without fine pointer
+    // Disable on touch devices or screens without fine cursor
     if (window.matchMedia('(pointer: coarse)').matches) {
       setIsTouchDevice(true);
       return;
     }
 
+    let rafId = null;
+
     const handleMouseMove = (e) => {
-      mouseX.set(e.clientX);
-      mouseY.set(e.clientY);
+      const clientX = e.clientX;
+      const clientY = e.clientY;
+
+      mouseX.set(clientX);
+      mouseY.set(clientY);
+
       if (!isVisible) setIsVisible(true);
+
+      // Throttled coordinate display update for performance
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          setCoords({ x: Math.round(clientX), y: Math.round(clientY) });
+          rafId = null;
+        });
+      }
     };
 
     const handleMouseDown = () => setIsClicking(true);
     const handleMouseUp = () => setIsClicking(false);
 
-    const handleMouseLeave = () => setIsVisible(false);
+    const handleMouseLeave = () => {
+      setIsVisible(false);
+      setHoverSpec(null);
+      setInspectBox(null);
+    };
+
     const handleMouseEnter = () => setIsVisible(true);
 
     const handleMouseOver = (e) => {
       const target = e.target;
       if (!target || !target.closest) return;
 
-      // 1. Text inputs & textareas: restore native cursor, hide ring
+      // Check if hovering over native input/textarea
       if (target.closest('input, textarea, [contenteditable="true"]')) {
-        setCursorState('input');
-        setCursorText('');
+        setHoverSpec({ type: 'input', label: 'INPUT', width: 0, height: 0 });
+        setInspectBox(null);
         return;
       }
 
-      // 2. Draggable elements (Stickers on About page, vinyl player on Fun page)
-      const dragEl = target.closest('.about-sticker, .disc-carousel-container, .vinyl-stage, [data-cursor="drag"]');
-      if (dragEl) {
-        setCursorState('drag');
-        setCursorText('DRAG ✦');
-        return;
-      }
-
-      // 3. Project Cards (Work section)
-      const projectEl = target.closest('.project-card, .featured-card, [data-cursor="view"]');
-      if (projectEl) {
-        setCursorState('view');
-        setCursorText('VIEW ↗');
-        return;
-      }
-
-      // 4. Copy actions (Email pill, copy buttons)
-      const copyEl = target.closest('.email-copy-pill, .copy-btn, [data-cursor="copy"]');
-      if (copyEl) {
-        setCursorState('copy');
-        setCursorText('COPY');
-        return;
-      }
-
-      // 5. Interactive links, buttons, nav, chips, social icons
-      const interactiveEl = target.closest(
-        'a, button, [role="button"], .nav-link, .stat-box, .software-badge, .spotlight-card, .social-pill, .faisal-logo'
+      // Check for prominent interactive elements to inspect
+      const inspectEl = target.closest(
+        '.project-card, .about-sticker, button, a, .software-badge, .spotlight-card, .stat-box, .nav-link, .hero-status-pill, .vinyl-stage'
       );
-      if (interactiveEl) {
-        setCursorState('pointer');
-        setCursorText('');
-        return;
-      }
 
-      // Default state
-      setCursorState('default');
-      setCursorText('');
+      if (inspectEl) {
+        const rect = inspectEl.getBoundingClientRect();
+        let label = inspectEl.tagName.toLowerCase();
+
+        if (inspectEl.classList.contains('project-card')) label = 'CARD';
+        else if (inspectEl.classList.contains('about-sticker')) label = 'STICKER';
+        else if (inspectEl.classList.contains('software-badge')) label = 'TOOL';
+        else if (inspectEl.classList.contains('spotlight-card')) label = 'STORY';
+        else if (inspectEl.classList.contains('stat-box')) label = 'STAT';
+        else if (inspectEl.classList.contains('nav-link')) label = 'NAV';
+        else if (label === 'button') label = 'BTN';
+        else if (label === 'a') label = 'LINK';
+
+        setHoverSpec({
+          label: label.toUpperCase(),
+          width: Math.round(rect.width),
+          height: Math.round(rect.height),
+        });
+
+        setInspectBox({
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        });
+      } else {
+        setHoverSpec(null);
+        setInspectBox(null);
+      }
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
@@ -94,7 +107,7 @@ export default function CustomCursor() {
     document.addEventListener('mouseenter', handleMouseEnter);
     document.addEventListener('mouseover', handleMouseOver);
 
-    document.body.classList.add('custom-cursor-enabled');
+    document.body.classList.add('figma-cursor-enabled');
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -103,37 +116,95 @@ export default function CustomCursor() {
       document.removeEventListener('mouseleave', handleMouseLeave);
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseover', handleMouseOver);
-      document.body.classList.remove('custom-cursor-enabled');
+      document.body.classList.remove('figma-cursor-enabled');
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [isVisible, mouseX, mouseY]);
 
   if (isTouchDevice) return null;
 
   return (
-    <div className={`custom-cursor-root ${isVisible ? 'is-visible' : ''}`} aria-hidden="true">
-      {/* Outer Fluid Trailing Ring / Lens */}
-      <motion.div
-        className={`cursor-ring state-${cursorState} ${isClicking ? 'is-clicking' : ''}`}
-        style={{
-          x: smoothX,
-          y: smoothY,
-          translateX: '-50%',
-          translateY: '-50%',
-        }}
-      >
-        {cursorText && <span className="cursor-label">{cursorText}</span>}
-      </motion.div>
+    <>
+      {/* Figma Selection / Hover Bounding Outline on Element */}
+      {inspectBox && hoverSpec?.type !== 'input' && (
+        <div
+          className="figma-inspect-bounding-box"
+          style={{
+            top: `${inspectBox.top}px`,
+            left: `${inspectBox.left}px`,
+            width: `${inspectBox.width}px`,
+            height: `${inspectBox.height}px`,
+          }}
+        >
+          <span className="figma-dimension-badge top-left">
+            {hoverSpec.width} × {hoverSpec.height}
+          </span>
+        </div>
+      )}
 
-      {/* Center Precision Dot */}
+      {/* Figma Pointer Cursor Component */}
       <motion.div
-        className={`cursor-dot state-${cursorState} ${isClicking ? 'is-clicking' : ''}`}
+        className={`figma-cursor-container ${isVisible ? 'is-visible' : ''} ${isClicking ? 'is-clicking' : ''} ${
+          hoverSpec?.type === 'input' ? 'is-input-mode' : ''
+        }`}
         style={{
           x: mouseX,
           y: mouseY,
-          translateX: '-50%',
-          translateY: '-50%',
         }}
-      />
-    </div>
+        aria-hidden="true"
+      >
+        {/* Figma Designer Arrow Pointer (SVG) */}
+        <div className="figma-arrow-wrapper">
+          <svg
+            className="figma-arrow-svg"
+            width="22"
+            height="22"
+            viewBox="0 0 22 22"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.5 0.5V18.5L5.5 13.5H13.5L0.5 0.5Z"
+              fill="#FF4A21"
+              stroke="#FFFFFF"
+              strokeWidth="1.5"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+
+        {/* Multiplayer Designer Badge & HUD */}
+        <div className="figma-tag-cluster">
+          {/* Main User Tag Pill */}
+          <div className="figma-name-tag">
+            <span className="figma-tag-text">Kalash</span>
+            <span className="figma-tag-tool">{isClicking ? 'EDIT' : 'FIGMA'}</span>
+          </div>
+
+          {/* Coordinate Readout HUD */}
+          <div className="figma-coords-tag">
+            <span className="coord-val">
+              X: {coords.x} Y: {coords.y}
+            </span>
+          </div>
+
+          {/* Element Inspection Tag (appears on hover) */}
+          {hoverSpec && hoverSpec.type !== 'input' && (
+            <motion.div
+              className="figma-spec-pill"
+              initial={{ opacity: 0, scale: 0.85, y: -4 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ duration: 0.15 }}
+            >
+              <span className="spec-label">{hoverSpec.label}</span>
+              <span className="spec-dims">
+                {hoverSpec.width} × {hoverSpec.height}
+              </span>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+    </>
   );
 }
