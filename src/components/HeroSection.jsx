@@ -31,9 +31,6 @@ export default function HeroSection() {
       const relX = e.clientX - rect.left;
       const relY = e.clientY - rect.top;
 
-      el.style.setProperty('--cursor-x', `${relX}px`);
-      el.style.setProperty('--cursor-y', `${relY}px`);
-
       setMouse({
         x: (relX - cx) / cx,
         y: (relY - cy) / cy,

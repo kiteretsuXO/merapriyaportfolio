@@ -20,21 +20,6 @@
   will-change: transform;
 }
 
-/* ─── Interactive Mouse Spotlight on Dots ─── */
-.prasha-hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background: radial-gradient(
-    circle 380px at var(--cursor-x, 50%) var(--cursor-y, 35%),
-    rgba(255, 74, 33, 0.055),
-    transparent 70%
-  );
-  transition: opacity 0.3s ease;
-}
-
 @keyframes dotCanvasDrift {
   0% {
     transform: translate3d(0, 0, 0);
