@@ -1,47 +1,39 @@
 /* ==========================================================================
-   ContactModal — Clean & Simple Editorial Modal
-   Single column, airy, warm ivory #fcfaf4 with deep pine teal accents
+   ContactModal — Immersive & Fun Editorial Modal
+   Floating doodle stickers, staggered reveals, playful micro-interactions
+   Warm ivory #fcfaf4 with deep pine teal accents
    ========================================================================== */
 
 .contact-backdrop {
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: rgba(14, 38, 37, 0.55);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(14, 38, 37, 0.5);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  animation: simpleModalFade 0.2s ease forwards;
-}
-
-@keyframes simpleModalFade {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes simpleModalPop {
-  from { opacity: 0; transform: translateY(16px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .contact-modal-simple {
   position: relative;
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   background: #fcfaf4;
-  border: 1px solid rgba(26, 79, 77, 0.12);
-  border-radius: 28px;
-  padding: 36px 36px 30px;
+  border: 1px solid rgba(26, 79, 77, 0.1);
+  border-radius: 32px;
+  padding: 40px 38px 32px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  box-shadow: 0 24px 70px rgba(10, 32, 31, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
-  animation: simpleModalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-shadow:
+    0 30px 80px rgba(10, 32, 31, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+    0 -4px 12px rgba(216, 243, 185, 0.15) inset;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: visible;
 }
 
 /* Custom scrollbar */
@@ -53,13 +45,60 @@
   border-radius: 6px;
 }
 
+/* ─── Floating Draggable Stickers ─── */
+.contact-floating-sticker {
+  position: absolute;
+  z-index: 50;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+  transition: filter 0.25s ease;
+}
+
+.contact-floating-sticker:active {
+  cursor: grabbing;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.2));
+}
+
+/* Sticker positions — scattered playfully around the modal edges */
+.sticker-spiral {
+  top: -18px;
+  left: -22px;
+}
+
+.sticker-star {
+  top: -14px;
+  right: 60px;
+}
+
+.sticker-heart {
+  top: 45%;
+  right: -24px;
+}
+
+.sticker-zigzag {
+  bottom: 80px;
+  left: -30px;
+}
+
+.sticker-smile {
+  bottom: -16px;
+  right: -18px;
+}
+
+.sticker-arrow {
+  bottom: -14px;
+  left: 40%;
+}
+
 /* ─── Close Button ─── */
 .contact-simple-close {
   position: absolute;
   top: 22px;
   right: 22px;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: #f1ede2;
   border: 1px solid rgba(26, 79, 77, 0.1);
@@ -69,13 +108,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s var(--ease-spring);
-}
-
-.contact-simple-close:hover {
-  background: #1a4f4d;
-  color: #ffffff;
-  transform: rotate(90deg);
+  z-index: 60;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 /* ─── Header ─── */
@@ -89,39 +123,63 @@
   font-family: var(--font-mono);
   font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #648480;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-simple-badge::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d8f3b9;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
 }
 
 .contact-simple-title {
   font-family: var(--font-sans);
-  font-size: clamp(1.8rem, 4vw, 2.2rem);
+  font-size: clamp(1.9rem, 4.5vw, 2.4rem);
   font-weight: 600;
   color: #1a4f4d;
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
 }
 
 .contact-simple-desc {
   font-family: var(--font-sans);
   font-size: 0.92rem;
-  line-height: 1.5;
+  line-height: 1.55;
   color: #555555;
   margin-top: 2px;
 }
 
 /* Quick email box */
 .contact-simple-email-row {
-  margin-top: 6px;
+  margin-top: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f1ede2;
+  background: linear-gradient(135deg, #f1ede2 0%, #e8e4d8 100%);
   border: 1px solid rgba(26, 79, 77, 0.1);
-  border-radius: 14px;
-  padding: 10px 14px;
+  border-radius: 16px;
+  padding: 12px 14px;
   gap: 10px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-simple-email-row:hover {
+  border-color: rgba(26, 79, 77, 0.2);
+  box-shadow: 0 2px 12px rgba(26, 79, 77, 0.06);
 }
 
 .contact-simple-email-link {
@@ -141,7 +199,7 @@
 }
 
 .contact-simple-copy-btn {
-  padding: 6px 14px;
+  padding: 7px 16px;
   border-radius: 9999px;
   background: #d8f3b9;
   color: #1a4f4d;
@@ -168,107 +226,164 @@
 .contact-simple-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .contact-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 14px;
+}
+
+/* Input Wrappers with focus glow */
+.contact-input-wrapper {
+  position: relative;
+  border-radius: 14px;
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+}
+
+.contact-input-wrapper.focused {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(26, 79, 77, 0.08);
+}
+
+.contact-input-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #d8f3b9, #bde1e6, #fac4d8);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.contact-input-wrapper.focused::after {
+  opacity: 1;
 }
 
 .contact-simple-form input,
 .contact-simple-form textarea {
   width: 100%;
-  padding: 12px 14px;
-  border-radius: 12px;
+  padding: 13px 16px;
+  border-radius: 14px;
   background: #ffffff;
-  border: 1px solid rgba(26, 79, 77, 0.14);
+  border: 1.5px solid rgba(26, 79, 77, 0.12);
   color: #1a4f4d;
   font-family: var(--font-sans);
   font-size: 0.88rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
 }
 
 .contact-simple-form input::placeholder,
 .contact-simple-form textarea::placeholder {
   color: #92a2a0;
+  transition: color 0.2s ease;
 }
 
 .contact-simple-form input:focus,
 .contact-simple-form textarea:focus {
   border-color: #1a4f4d;
-  box-shadow: 0 0 0 3px rgba(26, 79, 77, 0.08);
+  background: #fefefe;
+}
+
+.contact-simple-form input:focus::placeholder,
+.contact-simple-form textarea:focus::placeholder {
+  color: #b0c0be;
 }
 
 .contact-simple-form textarea {
-  min-height: 100px;
+  min-height: 105px;
   resize: vertical;
 }
 
-/* Submit Button */
+/* ─── Submit Button ─── */
 .contact-simple-submit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 13px 24px;
+  gap: 10px;
+  padding: 14px 28px;
   border-radius: 9999px;
-  background: #1a4f4d;
+  background: linear-gradient(135deg, #1a4f4d 0%, #215b59 100%);
   color: #ffffff;
   font-family: var(--font-sans);
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   font-weight: 700;
+  letter-spacing: 0.01em;
   border: none;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(26, 79, 77, 0.2);
-  transition: all 0.25s var(--ease-spring);
-  margin-top: 2px;
+  box-shadow: 0 6px 18px rgba(26, 79, 77, 0.22);
+  transition: all 0.3s var(--ease-spring);
+  margin-top: 4px;
+  position: relative;
+  overflow: hidden;
 }
 
-.submit-arrow {
-  font-size: 0.95rem;
-  transition: transform 0.2s ease;
+/* Shimmer sweep on hover */
+.contact-simple-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(216, 243, 185, 0.15),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.contact-simple-submit:hover::before {
+  left: 100%;
 }
 
 .contact-simple-submit:hover {
-  background: #215b59;
+  background: linear-gradient(135deg, #215b59 0%, #2a6f6d 100%);
   color: #d8f3b9;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(26, 79, 77, 0.3);
+}
+
+.submit-arrow {
+  font-size: 1rem;
+  display: inline-block;
+  transition: transform 0.25s var(--ease-spring);
 }
 
 .contact-simple-submit:hover .submit-arrow {
-  transform: translate(2px, -2px);
+  transform: translate(3px, -3px);
 }
 
 /* ─── Success State ─── */
 .contact-simple-success {
-  padding: 30px 20px;
-  border-radius: 16px;
-  background: #d8f3b9;
+  padding: 36px 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #d8f3b9 0%, #bde1e6 100%);
   color: #1a4f4d;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .success-emoji {
-  font-size: 2rem;
+  font-size: 2.4rem;
+  display: block;
 }
 
 .contact-simple-success h3 {
   font-family: var(--font-sans);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 700;
 }
 
 .contact-simple-success p {
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: #215b59;
 }
 
@@ -278,7 +393,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding-top: 18px;
+  padding-top: 20px;
   border-top: 1px solid rgba(26, 79, 77, 0.08);
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -308,11 +423,12 @@
   color: #ff4a21;
 }
 
-/* Mobile */
+/* ─── Mobile ─── */
 @media (max-width: 540px) {
   .contact-modal-simple {
-    padding: 28px 22px 22px;
-    border-radius: 22px;
+    padding: 30px 22px 22px;
+    border-radius: 24px;
+    overflow-y: auto;
   }
 
   .contact-form-grid {
@@ -323,5 +439,17 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+  }
+
+  /* Pull stickers tighter on mobile */
+  .sticker-spiral { left: -10px; top: -12px; }
+  .sticker-star { right: 40px; top: -10px; }
+  .sticker-heart { right: -12px; }
+  .sticker-zigzag { left: -16px; }
+  .sticker-smile { right: -10px; bottom: -10px; }
+  .sticker-arrow { left: 30%; }
+
+  .contact-floating-sticker svg {
+    transform: scale(0.82);
   }
 }

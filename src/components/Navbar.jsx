@@ -54,7 +54,6 @@ export default function Navbar({ onOpenContact }) {
 
         {/* Nav Links */}
         <nav className="faisal-nav" aria-label="Primary navigation">
-          <span className="nav-index">Index / 05</span>
           <a href="#work" onClick={handleWorkClick} className="nav-link">
             Work
           </a>

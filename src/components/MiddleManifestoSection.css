@@ -65,8 +65,18 @@
   position: absolute;
   width: 70px;
   height: 70px;
-  z-index: 10;
-  pointer-events: none;
+  z-index: 20;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.08));
+  transition: filter 0.2s ease;
+}
+
+.doodle-icon:active {
+  cursor: grabbing;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.2));
 }
 
 .top-left-doodle {

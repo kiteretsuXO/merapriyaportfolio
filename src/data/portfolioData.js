@@ -30,8 +30,8 @@ export const portfolioData = {
     badge: "02 / PROFILE & ARCHIVE",
     headline: "Transforming ambiguous problems into pixel-accurate, human interfaces.",
     bioParagraphs: [
-      "I'm Kalash Bawankar — a Communication Designer specializing in UI/UX Design at Symbiosis Institute of Design, Nagpur. I believe that good design isn't just about pretty pixels; it's about reducing friction between human intent and complex technology.",
-      "From designing 20+ NDA client screens during my internship at IB Group to securing a Top 10 finish in a 4-hour high-speed UI/UX hackathon, I thrive under real constraints. Outside the canvas, I experiment with spatial storytelling through projection-mapped visual media."
+      "I design interfaces that feel effortless — reducing friction between human intent and complex technology.",
+      "Currently studying B.Des at Symbiosis Institute of Design, Nagpur. When I'm not in Figma, I experiment with spatial storytelling through projection-mapped visuals."
     ],
     stats: [
       { value: "TOP 10", label: "GFG Hackathon" },

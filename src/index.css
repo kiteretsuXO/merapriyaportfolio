@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* ==========================================================================
    Kalash Bawankar — Light Mode Editorial Design System
    Fonts: Space Grotesk

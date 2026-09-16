@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import './MiddleManifestoSection.css';
 
 // Splits the statement into word spans, each animated individually
@@ -70,9 +71,21 @@ export default function MiddleManifestoSection() {
         {/* Left Photo with Doodles */}
         <div className={`manifesto-photo-wrapper${imgInView ? ' img-revealed' : ''}`}>
           {/* Top-Left Doodle Sketch */}
-          <svg className="doodle-icon top-left-doodle" viewBox="0 0 100 100">
-            <path d="M30,20 C40,20 40,35 30,35 C20,35 20,20 30,20 Z M30,35 C40,35 40,50 30,50 C20,50 20,35 30,35 Z M30,50 C40,50 40,65 30,65 C20,65 20,50 30,50 Z M50,20 C60,20 60,35 50,35 C40,35 40,20 50,20 Z M50,35 C60,35 60,50 50,50 C40,50 40,35 50,35 Z" fill="none" stroke="#000000" strokeWidth="4" strokeLinecap="round" />
-          </svg>
+          <motion.div
+            drag
+            dragConstraints={sectionRef}
+            dragElastic={0.15}
+            dragMomentum={true}
+            whileHover={{ scale: 1.15, rotate: -12 }}
+            whileTap={{ scale: 1.25, cursor: 'grabbing' }}
+            whileDrag={{ scale: 1.25, zIndex: 100 }}
+            className="doodle-icon top-left-doodle"
+            title="Drag me!"
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+              <path d="M30,20 C40,20 40,35 30,35 C20,35 20,20 30,20 Z M30,35 C40,35 40,50 30,50 C20,50 20,35 30,35 Z M30,50 C40,50 40,65 30,65 C20,65 20,50 30,50 Z M50,20 C60,20 60,35 50,35 C40,35 40,20 50,20 Z M50,35 C60,35 60,50 50,50 C40,50 40,35 50,35 Z" fill="none" stroke="#000000" strokeWidth="4" strokeLinecap="round" />
+            </svg>
+          </motion.div>
 
           {/* Photo Frame */}
           <div className="manifesto-img-box">
@@ -84,9 +97,21 @@ export default function MiddleManifestoSection() {
           </div>
 
           {/* Bottom-Right Doodle Sketch */}
-          <svg className="doodle-icon bottom-right-doodle" viewBox="0 0 100 100">
-            <path d="M25,75 L35,45 L70,10 L85,25 L50,60 Z M70,10 L85,25 M25,75 L15,85 L35,80 Z" fill="none" stroke="#000000" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <motion.div
+            drag
+            dragConstraints={sectionRef}
+            dragElastic={0.15}
+            dragMomentum={true}
+            whileHover={{ scale: 1.15, rotate: 18 }}
+            whileTap={{ scale: 1.25, cursor: 'grabbing' }}
+            whileDrag={{ scale: 1.25, zIndex: 100 }}
+            className="doodle-icon bottom-right-doodle"
+            title="Drag me!"
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
+              <path d="M25,75 L35,45 L70,10 L85,25 L50,60 Z M70,10 L85,25 M25,75 L15,85 L35,80 Z" fill="none" stroke="#000000" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </motion.div>
         </div>
 
         {/* Right Statement Text */}
