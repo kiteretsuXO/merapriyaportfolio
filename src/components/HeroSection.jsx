@@ -1,7 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MousePointer2, Sparkles, Grid, ArrowDown, Plus } from 'lucide-react';
 import './HeroSection.css';
 import { portfolioData } from '../data/portfolioData';
+
+const ROTATING_ROLES = [
+  'Product Interfaces',
+  'Design Systems',
+  'Complex Flows',
+  'Spatial Narratives',
+];
+
+const STICKER_PRESETS = [
+  { text: 'APPROVED ✦', bg: '#10b981', color: '#ffffff', rotate: -8 },
+  { text: 'WIP ⚡', bg: '#f59e0b', color: '#ffffff', rotate: 12 },
+  { text: 'FIGMA NERD ✦', bg: '#8b5cf6', color: '#ffffff', rotate: -15 },
+  { text: '100% INTENTIONAL ✨', bg: '#ff4a21', color: '#ffffff', rotate: 6 },
+  { text: 'COFFEE FIRST ☕', bg: '#3c4b54', color: '#d8f3b9', rotate: -10 },
+  { text: 'PIXEL ACCURATE 🎯', bg: '#215b59', color: '#e4f1f5', rotate: 14 },
+];
 
 export default function HeroSection() {
   const { personalInfo } = portfolioData;
@@ -13,6 +30,50 @@ export default function HeroSection() {
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
   const [mounted, setMounted] = useState(false);
+
+  // Live IST Clock
+  const [currentTime, setCurrentTime] = useState('');
+
+  // Rotating Role Index
+  const [roleIndex, setRoleIndex] = useState(0);
+
+  // Figma Dot Grid Toggle
+  const [isGridActive, setIsGridActive] = useState(false);
+
+  // Dynamic User-Dropped Stickers
+  const [spawnedStickers, setSpawnedStickers] = useState([]);
+
+  // Active Tool Mode in Toolbar
+  const [activeTool, setActiveTool] = useState('select'); // 'select' | 'sticker' | 'grid'
+
+  // Clock Ticker (Nagpur / Asia/Kolkata)
+  useEffect(() => {
+    const updateTime = () => {
+      try {
+        const timeStr = new Intl.DateTimeFormat('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        }).format(new Date());
+        setCurrentTime(timeStr);
+      } catch (e) {
+        setCurrentTime('04:00 PM IST');
+      }
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Role Flipper Interval
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRoleIndex((prev) => (prev + 1) % ROTATING_ROLES.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, []);
 
   // Entrance animation trigger
   useEffect(() => {
@@ -44,9 +105,59 @@ export default function HeroSection() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Drop a new sticker onto canvas
+  const handleDropSticker = () => {
+    const preset = STICKER_PRESETS[Math.floor(Math.random() * STICKER_PRESETS.length)];
+    const randomOffset = (Math.random() - 0.5) * 200;
+    const newSticker = {
+      id: Date.now() + Math.random(),
+      text: preset.text,
+      bg: preset.bg,
+      color: preset.color,
+      rotate: preset.rotate + (Math.random() - 0.5) * 10,
+      initialX: randomOffset,
+      initialY: (Math.random() - 0.5) * 80,
+    };
+    setSpawnedStickers((prev) => [...prev, newSticker]);
+  };
+
+  // Scroll to work
+  const handleScrollToWork = () => {
+    const el = document.getElementById('work');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section id="top" className="prasha-hero" ref={heroRef}>
+    <section 
+      id="top" 
+      className={`prasha-hero ${isGridActive ? 'has-canvas-grid' : ''}`} 
+      ref={heroRef}
+    >
+      {/* Canvas Grid Background Overlay */}
+      {isGridActive && <div className="canvas-grid-overlay" aria-hidden="true" />}
+
       <div className="prasha-hero-inner">
+        {/* ─── Top Status Beacon & Live Clock Pill ─── */}
+        <motion.div
+          className="hero-status-pill"
+          initial={{ opacity: 0, y: -16, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="status-ping-wrap">
+            <span className="status-ping-radar" />
+            <span className="status-ping-dot" />
+            <span className="status-title">OPEN FOR ROLES</span>
+          </div>
+          <span className="status-separator">/</span>
+          <div className="status-location-wrap">
+            <span className="status-loc">NAGPUR, IN</span>
+            <span className="status-time">{currentTime || '04:00 PM IST'}</span>
+          </div>
+        </motion.div>
+
         {/* Interactive Draggable Background Stickers */}
         <motion.div
           drag
@@ -106,6 +217,28 @@ export default function HeroSection() {
           </svg>
         </motion.div>
 
+        {/* User-Dropped Dynamic Stickers */}
+        {spawnedStickers.map((sticker) => (
+          <motion.div
+            key={sticker.id}
+            drag
+            dragConstraints={heroRef}
+            dragElastic={0.15}
+            dragMomentum={true}
+            initial={{ scale: 0, x: sticker.initialX, y: sticker.initialY, rotate: sticker.rotate - 10 }}
+            animate={{ scale: 1, rotate: sticker.rotate }}
+            whileHover={{ scale: 1.14, zIndex: 120 }}
+            whileTap={{ scale: 1.25, cursor: 'grabbing' }}
+            whileDrag={{ scale: 1.25, zIndex: 150 }}
+            transition={{ type: 'spring', stiffness: 280, damping: 18 }}
+            className="spawned-sticker"
+            style={{ backgroundColor: sticker.bg, color: sticker.color }}
+            title="Drag me!"
+          >
+            <span>{sticker.text}</span>
+          </motion.div>
+        ))}
+
         {/* Text Blocks — subtle mouse movement */}
         <div
           className="prasha-title-container"
@@ -119,10 +252,81 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Description */}
+        {/* Description & Dynamic Focus Flipper */}
         <div className={`prasha-desc${mounted ? ' revealed' : ''}`}>
-          <p className="t-body">I start with the <span className="italic-problem">problem</span>, not the pixels.</p>
+          <p className="t-body">
+            I start with the <span className="italic-problem">problem</span>, not the pixels.
+          </p>
+
+          <div className="hero-role-flipper-row">
+            <span className="flipper-prefix">Designing</span>
+            <div className="flipper-pill-viewport">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={roleIndex}
+                  className="flipper-active-role"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  {ROTATING_ROLES[roleIndex]}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+            <span className="flipper-suffix">with friction-free intent.</span>
+          </div>
         </div>
+
+        {/* ─── Floating Figma Canvas Toolbar ─── */}
+        <motion.div
+          className="figma-hero-toolbar"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, type: 'spring', stiffness: 220, damping: 20 }}
+        >
+          {/* Tool: Select */}
+          <button
+            className={`toolbar-btn ${activeTool === 'select' ? 'is-active' : ''}`}
+            onClick={() => setActiveTool('select')}
+            title="Selection Tool [V]"
+          >
+            <MousePointer2 size={15} />
+            <span className="tool-label">Select</span>
+          </button>
+
+          {/* Tool: Drop Sticker */}
+          <button
+            className="toolbar-btn primary-action"
+            onClick={handleDropSticker}
+            title="Drop an interactive sticker onto the canvas!"
+          >
+            <Plus size={15} />
+            <span className="tool-label">Drop Sticker</span>
+          </button>
+
+          {/* Tool: Toggle Canvas Grid */}
+          <button
+            className={`toolbar-btn ${isGridActive ? 'is-active' : ''}`}
+            onClick={() => setIsGridActive(!isGridActive)}
+            title="Toggle Figma Dot Grid [#]"
+          >
+            <Grid size={15} />
+            <span className="tool-label">Grid</span>
+          </button>
+
+          <div className="toolbar-divider" />
+
+          {/* Tool: Explore Work Scroll */}
+          <button
+            className="toolbar-btn scroll-action"
+            onClick={handleScrollToWork}
+            title="Scroll to Selected Work"
+          >
+            <span className="tool-label">Work</span>
+            <ArrowDown size={14} />
+          </button>
+        </motion.div>
       </div>
 
       {/* Bottom part (Blue section) */}
