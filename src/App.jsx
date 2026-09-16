@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 import ContactModal from './components/ContactModal';
 import ProjectModal from './components/ProjectModal';
 import ScrollToTop from './components/ScrollToTop';
+import CustomCursor from './components/CustomCursor';
 
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
@@ -39,6 +40,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <CustomCursor />
       <div className="portfolio-app">
         {/* Top Header Bar */}
         <Navbar onOpenContact={() => setIsContactOpen(true)} />
