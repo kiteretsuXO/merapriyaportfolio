@@ -1,19 +1,15 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useMotionValue } from 'framer-motion';
 import './CustomCursor.css';
 
 export default function CustomCursor() {
-  const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [hoverSpec, setHoverSpec] = useState(null); // { label: string, width: number, height: number }
   const [isClicking, setIsClicking] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isInputMode, setIsInputMode] = useState(false);
+  const [inspectBox, setInspectBox] = useState(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  const mouseX = useMotionValue(-100);
-  const mouseY = useMotionValue(-100);
-
-  // Reference for inspection bounding box
-  const [inspectBox, setInspectBox] = useState(null);
+  const cursorRef = useRef(null);
+  const coordsRef = useRef(null);
 
   useEffect(() => {
     // Disable on touch devices or screens without fine cursor
@@ -22,23 +18,27 @@ export default function CustomCursor() {
       return;
     }
 
-    let rafId = null;
+    const cursorEl = cursorRef.current;
+    const coordsEl = coordsRef.current;
 
+    let hasShown = false;
+
+    // Direct synchronous GPU transform for 0ms lag 1:1 hardware mouse tracking
     const handleMouseMove = (e) => {
       const clientX = e.clientX;
       const clientY = e.clientY;
 
-      mouseX.set(clientX);
-      mouseY.set(clientY);
+      if (cursorEl) {
+        cursorEl.style.transform = `translate3d(${clientX}px, ${clientY}px, 0)`;
+        if (!hasShown) {
+          cursorEl.style.opacity = '1';
+          hasShown = true;
+        }
+      }
 
-      if (!isVisible) setIsVisible(true);
-
-      // Throttled coordinate display update for performance
-      if (!rafId) {
-        rafId = requestAnimationFrame(() => {
-          setCoords({ x: Math.round(clientX), y: Math.round(clientY) });
-          rafId = null;
-        });
+      // Direct DOM update for live coordinates (no React state re-render loop)
+      if (coordsEl) {
+        coordsEl.textContent = `X: ${Math.round(clientX)} Y: ${Math.round(clientY)}`;
       }
     };
 
@@ -46,23 +46,29 @@ export default function CustomCursor() {
     const handleMouseUp = () => setIsClicking(false);
 
     const handleMouseLeave = () => {
-      setIsVisible(false);
+      if (cursorEl) cursorEl.style.opacity = '0';
+      hasShown = false;
       setHoverSpec(null);
       setInspectBox(null);
     };
 
-    const handleMouseEnter = () => setIsVisible(true);
+    const handleMouseEnter = () => {
+      if (cursorEl) cursorEl.style.opacity = '1';
+      hasShown = true;
+    };
 
     const handleMouseOver = (e) => {
       const target = e.target;
       if (!target || !target.closest) return;
 
-      // Check if hovering over native input/textarea
+      // Text input mode
       if (target.closest('input, textarea, [contenteditable="true"]')) {
-        setHoverSpec({ type: 'input', label: 'INPUT', width: 0, height: 0 });
+        setIsInputMode(true);
+        setHoverSpec(null);
         setInspectBox(null);
         return;
       }
+      setIsInputMode(false);
 
       // Check for prominent interactive elements to inspect
       const inspectEl = target.closest(
@@ -117,16 +123,15 @@ export default function CustomCursor() {
       document.removeEventListener('mouseenter', handleMouseEnter);
       document.removeEventListener('mouseover', handleMouseOver);
       document.body.classList.remove('figma-cursor-enabled');
-      if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [isVisible, mouseX, mouseY]);
+  }, []);
 
   if (isTouchDevice) return null;
 
   return (
     <>
       {/* Figma Selection / Hover Bounding Outline on Element */}
-      {inspectBox && hoverSpec?.type !== 'input' && (
+      {inspectBox && !isInputMode && (
         <div
           className="figma-inspect-bounding-box"
           style={{
@@ -137,20 +142,17 @@ export default function CustomCursor() {
           }}
         >
           <span className="figma-dimension-badge top-left">
-            {hoverSpec.width} × {hoverSpec.height}
+            {hoverSpec?.width} × {hoverSpec?.height}
           </span>
         </div>
       )}
 
-      {/* Figma Pointer Cursor Component */}
-      <motion.div
-        className={`figma-cursor-container ${isVisible ? 'is-visible' : ''} ${isClicking ? 'is-clicking' : ''} ${
-          hoverSpec?.type === 'input' ? 'is-input-mode' : ''
+      {/* Instant 1:1 Figma Pointer Cursor */}
+      <div
+        ref={cursorRef}
+        className={`figma-cursor-container ${isClicking ? 'is-clicking' : ''} ${
+          isInputMode ? 'is-input-mode' : ''
         }`}
-        style={{
-          x: mouseX,
-          y: mouseY,
-        }}
         aria-hidden="true"
       >
         {/* Figma Designer Arrow Pointer (SVG) */}
@@ -183,28 +185,22 @@ export default function CustomCursor() {
 
           {/* Coordinate Readout HUD */}
           <div className="figma-coords-tag">
-            <span className="coord-val">
-              X: {coords.x} Y: {coords.y}
+            <span ref={coordsRef} className="coord-val">
+              X: 0 Y: 0
             </span>
           </div>
 
           {/* Element Inspection Tag (appears on hover) */}
-          {hoverSpec && hoverSpec.type !== 'input' && (
-            <motion.div
-              className="figma-spec-pill"
-              initial={{ opacity: 0, scale: 0.85, y: -4 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.85 }}
-              transition={{ duration: 0.15 }}
-            >
+          {hoverSpec && !isInputMode && (
+            <div className="figma-spec-pill">
               <span className="spec-label">{hoverSpec.label}</span>
               <span className="spec-dims">
                 {hoverSpec.width} × {hoverSpec.height}
               </span>
-            </motion.div>
+            </div>
           )}
         </div>
-      </motion.div>
+      </div>
     </>
   );
 }

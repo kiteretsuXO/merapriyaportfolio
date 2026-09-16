@@ -1,6 +1,6 @@
 /* ==========================================================================
-   Figma Multiplayer & Design Inspector Cursor
-   Authentic designer tool aesthetic with live HUD & element inspection
+   Figma Multiplayer & Design Inspector Cursor (Zero-Latency 1:1 Hardware Speed)
+   Direct GPU hardware transforms with zero interpolation delay
    ========================================================================== */
 
 /* ── Hide native browser arrow on desktop pointer devices ── */
@@ -21,7 +21,7 @@
   }
 }
 
-/* ── Main Cursor Container ── */
+/* ── Main Cursor Container (Instantaneous 1:1 hardware translation) ── */
 .figma-cursor-container {
   position: fixed;
   top: 0;
@@ -30,19 +30,12 @@
   z-index: 10000000;
   opacity: 0;
   will-change: transform;
-  transition: opacity 0.2s ease, transform 0.08s ease;
-}
-
-.figma-cursor-container.is-visible {
-  opacity: 1;
+  /* NO transition on transform — moves identically with physical mouse */
+  transition: opacity 0.12s ease;
 }
 
 .figma-cursor-container.is-input-mode {
-  opacity: 0;
-}
-
-.figma-cursor-container.is-clicking {
-  transform: scale(0.92) rotate(-3deg);
+  opacity: 0 !important;
 }
 
 /* ── Figma Designer Pointer Arrow (SVG) ── */
@@ -51,10 +44,16 @@
   top: 0;
   left: 0;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.22));
+  transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .figma-arrow-svg {
   display: block;
+}
+
+/* Micro click bounce on the arrow itself (never affects pointer position) */
+.figma-cursor-container.is-clicking .figma-arrow-wrapper {
+  transform: scale(0.88) rotate(-4deg);
 }
 
 /* ── Tag Cluster (Multiplayer Badge + HUD) ── */
@@ -68,6 +67,11 @@
   gap: 3px;
   pointer-events: none;
   user-select: none;
+  transition: transform 0.08s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.figma-cursor-container.is-clicking .figma-tag-cluster {
+  transform: scale(0.95);
 }
 
 /* ── Multiplayer Name Tag (Signature Figma Shape) ── */
@@ -139,6 +143,18 @@
   letter-spacing: 0.04em;
   box-shadow: 0 4px 12px rgba(12, 140, 233, 0.35);
   white-space: nowrap;
+  animation: specPillIn 0.12s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes specPillIn {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .spec-label {
