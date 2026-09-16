@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { musicTracks } from '../data/musicData';
 import { 
   Play, 
@@ -9,27 +8,29 @@ import {
   Volume2, 
   VolumeX, 
   ExternalLink,
-  Disc,
-  Radio,
-  Sliders,
   Sparkles
 } from 'lucide-react';
 import './MusicPage.css';
 
 export default function MusicPage() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [rpm, setRpm] = useState(33); // 33 or 45
-  const [volume, setVolume] = useState(0.85);
   const [isMuted, setIsMuted] = useState(false);
 
   const audioRef = useRef(null);
+  const dragStartX = useRef(0);
+  const dragCurrentX = useRef(0);
+  const carouselRef = useRef(null);
+  const hasDragged = useRef(false);
   const progressBarRef = useRef(null);
 
-  const activeTrack = musicTracks[activeIndex];
   const total = musicTracks.length;
+  const SWIPE_THRESHOLD = 45;
+  const activeTrack = musicTracks[activeIndex];
 
   // Format time (seconds -> mm:ss)
   const formatTime = (secs) => {
@@ -39,10 +40,11 @@ export default function MusicPage() {
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  // Switch to specific track
+  // Switch Track
   const goToTrack = useCallback((index) => {
     const next = ((index % total) + total) % total;
     setActiveIndex(next);
+    setDragOffset(0);
     setCurrentTime(0);
 
     if (audioRef.current) {
@@ -57,7 +59,7 @@ export default function MusicPage() {
   const goPrev = useCallback(() => goToTrack(activeIndex - 1), [activeIndex, goToTrack]);
   const goNext = useCallback(() => goToTrack(activeIndex + 1), [activeIndex, goToTrack]);
 
-  // Toggle Play/Pause
+  // Toggle Play / Pause
   const togglePlay = useCallback(() => {
     if (!audioRef.current) return;
     if (isPlaying) {
@@ -67,36 +69,38 @@ export default function MusicPage() {
       audioRef.current
         .play()
         .then(() => setIsPlaying(true))
-        .catch((err) => console.log('Audio playback prevented:', err));
+        .catch((err) => console.log('Playback error:', err));
     }
   }, [isPlaying]);
 
-  // Keyboard Shortcuts (Space: Play/Pause, Arrows: Next/Prev)
+  // Keyboard Navigation
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKey = (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      if (e.key === ' ') {
-        e.preventDefault();
-        togglePlay();
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        goNext();
-      } else if (e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowLeft') {
         e.preventDefault();
         goPrev();
       }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goNext();
+      }
+      if (e.key === ' ') {
+        e.preventDefault();
+        togglePlay();
+      }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [togglePlay, goNext, goPrev]);
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [goPrev, goNext, togglePlay]);
 
-  // Handle Audio events
+  // Audio lifecycle
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     audio.src = activeTrack.audioSrc;
-    audio.volume = isMuted ? 0 : volume;
+    audio.volume = isMuted ? 0 : 0.85;
 
     const onTimeUpdate = () => setCurrentTime(audio.currentTime);
     const onLoadedMetadata = () => setDuration(audio.duration || 0);
@@ -111,9 +115,9 @@ export default function MusicPage() {
       audio.removeEventListener('loadedmetadata', onLoadedMetadata);
       audio.removeEventListener('ended', onEnded);
     };
-  }, [activeTrack, goNext, volume, isMuted]);
+  }, [activeTrack, goNext, isMuted]);
 
-  // Seek on timeline
+  // Seek on scrubber
   const handleSeek = (e) => {
     if (!audioRef.current || !progressBarRef.current) return;
     const rect = progressBarRef.current.getBoundingClientRect();
@@ -123,310 +127,300 @@ export default function MusicPage() {
     setCurrentTime(newTime);
   };
 
-  // Toggle Volume / Mute
-  const toggleMute = () => {
-    if (!audioRef.current) return;
-    if (isMuted) {
-      audioRef.current.volume = volume;
-      setIsMuted(false);
+  // Drag handlers for smooth cover flow swipe
+  const handleDragStart = useCallback((clientX) => {
+    setIsDragging(true);
+    dragStartX.current = clientX;
+    dragCurrentX.current = clientX;
+    hasDragged.current = false;
+  }, []);
+
+  const handleDragMove = useCallback((clientX) => {
+    if (!isDragging) return;
+    dragCurrentX.current = clientX;
+    const diff = clientX - dragStartX.current;
+    if (Math.abs(diff) > 5) hasDragged.current = true;
+    setDragOffset(diff);
+  }, [isDragging]);
+
+  const handleDragEnd = useCallback(() => {
+    if (!isDragging) return;
+    setIsDragging(false);
+    const diff = dragCurrentX.current - dragStartX.current;
+
+    if (Math.abs(diff) > SWIPE_THRESHOLD) {
+      if (diff < 0) goNext();
+      else goPrev();
     } else {
-      audioRef.current.volume = 0;
-      setIsMuted(true);
+      setDragOffset(0);
     }
+  }, [isDragging, goNext, goPrev]);
+
+  const onMouseDown = (e) => {
+    e.preventDefault();
+    handleDragStart(e.clientX);
+  };
+  const onTouchStart = (e) => handleDragStart(e.touches[0].clientX);
+  const onTouchMove = (e) => handleDragMove(e.touches[0].clientX);
+  const onTouchEnd = () => handleDragEnd();
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMove = (e) => handleDragMove(e.clientX);
+    const onUp = () => handleDragEnd();
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, [isDragging, handleDragMove, handleDragEnd]);
+
+  // Circular offset logic
+  const getCardOffset = (idx) => {
+    let diff = idx - activeIndex;
+    if (diff > total / 2) diff -= total;
+    if (diff < -total / 2) diff += total;
+    return diff;
   };
 
   return (
-    <div className="fun-page-view">
+    <main className="junk-drawer-page">
       <audio ref={audioRef} preload="metadata" />
 
-      <div className="fun-page-container">
-        {/* ═══════ Page Header ═══════ */}
-        <header className="fun-header">
-          <div className="fun-badge-tag">
-            <span className="badge-pulse" />
-            <span>03 / AUDIO PLAYGROUND · 33⅓ RPM</span>
-          </div>
-          <h1 className="fun-title">The Sound of Flow State</h1>
-          <p className="fun-subtitle">
-            A physical archive of records looping in my headphones during wireframing, high-speed UI
-            sprints, and late-night projection mapping experiments. Drop a record onto the deck.
-          </p>
-        </header>
+      {/* Cinematic Studio Backdrop with Soft Atmospheric Illumination */}
+      <div 
+        className="studio-ambient-light"
+        style={{
+          background: `radial-gradient(ellipse 70% 50% at 50% 40%, ${activeTrack.accentColor}28 0%, rgba(10, 10, 14, 0) 70%)`
+        }}
+      />
+      <div className="studio-subtle-grid" />
 
-        {/* ═══════ Hi-Fi Turntable Workstation Console ═══════ */}
-        <div className="turntable-console">
-          <div className="console-chassis">
-            
-            {/* Top Brushed Faceplate Header */}
-            <div className="chassis-header-strip">
-              <div className="chassis-brand">
-                <Radio size={14} className="brand-icon" />
-                <span className="brand-name">KALASH HI-FI · MODEL-26</span>
+      {/* Hero Header */}
+      <header className="junk-drawer-header">
+        <div className="junk-badge">
+          <span className="junk-badge-dot" />
+          <span>HEAVY ROTATION · 33⅓ RPM</span>
+        </div>
+        <h1 className="junk-drawer-title">
+          junk drawer
+        </h1>
+        <p className="junk-drawer-subtitle">
+          The records looping in my headphones during wireframing, high-speed UI hackathons, and
+          late-night projection mapping experiments. Click the vinyl to play.
+        </p>
+      </header>
+
+      {/* 3D Gatefold Cover Flow Carousel */}
+      <section
+        className={`coverflow-stage ${isDragging ? 'is-dragging' : ''}`}
+        ref={carouselRef}
+        onMouseDown={onMouseDown}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        data-cursor="drag"
+      >
+        <div className="coverflow-center-track">
+          {musicTracks.map((track, idx) => {
+            const offset = getCardOffset(idx);
+            const isActive = offset === 0;
+            const absOffset = Math.abs(offset);
+
+            if (absOffset > 2) return null; // Render 5 visible items
+
+            // 3D placement math
+            const posX = offset * 260 + dragOffset;
+            const rotY = offset * -26;
+            const scale = isActive ? 1 : absOffset === 1 ? 0.78 : 0.58;
+            const opacity = isActive ? 1 : absOffset === 1 ? 0.55 : 0.25;
+            const zIndex = 10 - absOffset;
+
+            return (
+              <div
+                key={track.id}
+                className={`coverflow-item ${isActive ? 'is-active' : ''}`}
+                style={{
+                  transform: `translate(calc(-50% + ${posX}px), 0) scale(${scale}) rotateY(${rotY}deg)`,
+                  opacity: opacity,
+                  zIndex: zIndex,
+                  transition: isDragging
+                    ? 'none'
+                    : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease',
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (hasDragged.current) return;
+                  if (offset === -1) goPrev();
+                  else if (offset === 1) goNext();
+                  else if (isActive) togglePlay();
+                }}
+              >
+                {/* Vinyl Record Disc (Slides out of active sleeve) */}
+                <div 
+                  className={`gatefold-vinyl-disc ${isActive ? 'disc-slid-out' : ''} ${isActive && isPlaying ? 'is-spinning' : ''}`}
+                  title={isActive ? (isPlaying ? 'Click to Pause' : 'Click to Play') : 'Switch track'}
+                >
+                  <div className="vinyl-sheen-highlight" />
+                  <div className="vinyl-micro-groove g1" />
+                  <div className="vinyl-micro-groove g2" />
+                  <div className="vinyl-micro-groove g3" />
+                  <div className="vinyl-micro-groove g4" />
+                  <div className="vinyl-center-art">
+                    <img src={track.coverUrl} alt="" className="vinyl-art-img" />
+                    <div className="vinyl-spindle" />
+                  </div>
+                </div>
+
+                {/* Album Jacket Sleeve with tactile paper edge */}
+                <div className="album-jacket-sleeve">
+                  <img
+                    src={track.coverUrl}
+                    alt={`${track.title} by ${track.artist}`}
+                    className="jacket-art"
+                    draggable="false"
+                  />
+                  <div className="jacket-specular-sheen" />
+                  <div className="jacket-spine-border" />
+                  
+                  {/* Floating Play Indicator when active */}
+                  {isActive && (
+                    <div className="jacket-play-badge">
+                      {isPlaying ? (
+                        <Pause size={18} className="badge-icon" />
+                      ) : (
+                        <Play size={18} className="badge-icon offset-icon" />
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Studio Floor Reflection */}
+                <div className="jacket-floor-reflection">
+                  <img
+                    src={track.coverUrl}
+                    alt=""
+                    className="reflection-art"
+                    draggable="false"
+                  />
+                  <div className="reflection-fade-mask" />
+                </div>
               </div>
-              <div className="chassis-specs">
-                <span className="spec-indicator active">DIRECT DRIVE</span>
-                <span className="spec-separator">/</span>
-                <span className="spec-indicator">QUARTZ LOCK</span>
-                <span className="spec-separator">/</span>
-                <span className="spec-indicator">STEREO PHONO</span>
-              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Modern Floating Player HUD */}
+      <footer className="player-hud-container">
+        <div className="player-hud-chassis">
+          
+          {/* Left: Track Information & Designer Liner Note */}
+          <div className="hud-track-meta">
+            <div className="hud-title-row">
+              <span className="hud-title">{activeTrack.title}</span>
+              <span className="hud-vibe-pill" style={{ '--vibe-color': activeTrack.accentColor }}>
+                {activeTrack.vibe}
+              </span>
+            </div>
+            <p className="hud-artist">{activeTrack.artist} · <span className="hud-album">{activeTrack.album} ({activeTrack.year})</span></p>
+            {activeTrack.note && (
+              <p className="hud-designer-note">
+                <Sparkles size={11} className="note-sparkle" />
+                <span>{activeTrack.note}</span>
+              </p>
+            )}
+          </div>
+
+          {/* Center: Playback Controls & Scrubber */}
+          <div className="hud-center-controls">
+            <div className="hud-buttons-row">
+              <button 
+                className="hud-btn skip" 
+                onClick={goPrev} 
+                title="Previous Track (Left Arrow)"
+              >
+                <SkipBack size={16} />
+              </button>
+
+              <button 
+                className={`hud-btn play-pause ${isPlaying ? 'is-playing' : ''}`}
+                onClick={togglePlay}
+                title="Play/Pause (Space)"
+              >
+                {isPlaying ? <Pause size={20} /> : <Play size={20} className="play-offset" />}
+              </button>
+
+              <button 
+                className="hud-btn skip" 
+                onClick={goNext} 
+                title="Next Track (Right Arrow)"
+              >
+                <SkipForward size={16} />
+              </button>
             </div>
 
-            <div className="console-main-deck">
-              {/* ── Left: The Turntable Deck & Tonearm ── */}
-              <div className="turntable-platter-area">
-                <div className="platter-well">
-                  {/* Heavy Cast Aluminum Platter */}
-                  <div className="aluminum-platter">
-                    {/* The Vinyl Disc Record */}
-                    <div
-                      className={`vinyl-record ${isPlaying ? 'spinning' : ''}`}
-                      style={{
-                        animationDuration: rpm === 45 ? '1.8s' : '2.4s',
-                      }}
-                      onClick={togglePlay}
-                      title={isPlaying ? 'Click to pause vinyl' : 'Click to spin vinyl'}
-                    >
-                      {/* Vinyl Groove Rings */}
-                      <div className="record-sheen" />
-                      <div className="groove-layer groove-1" />
-                      <div className="groove-layer groove-2" />
-                      <div className="groove-layer groove-3" />
-                      <div className="groove-layer groove-4" />
-
-                      {/* Center Record Paper Label */}
-                      <div className="record-center-label">
-                        <img
-                          src={activeTrack.coverUrl}
-                          alt={activeTrack.title}
-                          className="center-label-art"
-                        />
-                        <div className="center-spindle-hole" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Mechanical Tonearm Assembly */}
-                  <div className={`tonearm-assembly ${isPlaying ? 'tonearm-on-record' : 'tonearm-at-rest'}`}>
-                    <div className="tonearm-gimbal-base">
-                      <div className="counterweight" />
-                    </div>
-                    <div className="tonearm-wand">
-                      <div className="cartridge-headshell">
-                        <div className="stylus-needle" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Pitch / Speed Toggle Switch */}
-                  <div className="deck-speed-toggle">
-                    <button
-                      className={`speed-btn ${rpm === 33 ? 'active' : ''}`}
-                      onClick={() => setRpm(33)}
-                    >
-                      33 RPM
-                    </button>
-                    <button
-                      className={`speed-btn ${rpm === 45 ? 'active' : ''}`}
-                      onClick={() => setRpm(45)}
-                    >
-                      45 RPM
-                    </button>
-                  </div>
-                </div>
+            {/* Scrubber Progress Bar */}
+            <div className="hud-scrubber-row">
+              <span className="time-val">{formatTime(currentTime)}</span>
+              <div 
+                className="hud-scrubber-track" 
+                ref={progressBarRef}
+                onClick={handleSeek}
+              >
+                <div 
+                  className="hud-scrubber-fill"
+                  style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+                />
               </div>
-
-              {/* ── Right: Now Playing Deck, Controls & Notes ── */}
-              <div className="turntable-info-panel">
-                
-                {/* Record Sleeve & Track Meta */}
-                <div className="now-playing-header">
-                  <div className="sleeve-artwork-wrapper">
-                    <img
-                      src={activeTrack.coverUrl}
-                      alt={activeTrack.title}
-                      className="sleeve-cover-img"
-                    />
-                    <div className="sleeve-spine-label">SIDE A · STEREO</div>
-                  </div>
-
-                  <div className="track-identity">
-                    <span className="track-genre-chip" style={{ '--chip-accent': activeTrack.accentColor }}>
-                      {activeTrack.vibe}
-                    </span>
-                    <h2 className="now-playing-title">{activeTrack.title}</h2>
-                    <p className="now-playing-artist">{activeTrack.artist}</p>
-                    <p className="now-playing-album">{activeTrack.album} · {activeTrack.year}</p>
-                  </div>
-                </div>
-
-                {/* Designer Liner Note (Authentic Human Context) */}
-                <div className="designer-liner-note">
-                  <div className="liner-note-header">
-                    <Sparkles size={13} className="liner-icon" />
-                    <span>DESIGNER LINER NOTE</span>
-                  </div>
-                  <p className="liner-note-quote">“{activeTrack.note}”</p>
-                </div>
-
-                {/* Analog VU Level Meters */}
-                <div className="analog-vu-strip">
-                  <div className="vu-meter-channel">
-                    <span className="vu-label">L</span>
-                    <div className="vu-led-track">
-                      {[...Array(12)].map((_, i) => (
-                        <span
-                          key={i}
-                          className={`vu-segment ${isPlaying && i < 8 + (i % 3) ? 'active' : ''} ${
-                            i >= 9 ? 'overload' : ''
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="vu-meter-channel">
-                    <span className="vu-label">R</span>
-                    <div className="vu-led-track">
-                      {[...Array(12)].map((_, i) => (
-                        <span
-                          key={i}
-                          className={`vu-segment ${isPlaying && i < 7 + ((i + 1) % 4) ? 'active' : ''} ${
-                            i >= 9 ? 'overload' : ''
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Timeline Scrubber */}
-                <div className="playback-scrubber-area">
-                  <div
-                    className="scrubber-bar-track"
-                    ref={progressBarRef}
-                    onClick={handleSeek}
-                  >
-                    <div
-                      className="scrubber-progress-fill"
-                      style={{
-                        width: `${duration ? (currentTime / duration) * 100 : 0}%`,
-                      }}
-                    />
-                  </div>
-                  <div className="scrubber-timestamps">
-                    <span>{formatTime(currentTime)}</span>
-                    <span>{formatTime(duration)}</span>
-                  </div>
-                </div>
-
-                {/* Mechanical Hardware Controls */}
-                <div className="hardware-controls-row">
-                  <div className="transport-buttons">
-                    <button
-                      className="ctrl-btn secondary"
-                      onClick={goPrev}
-                      title="Previous Track (Left Arrow)"
-                    >
-                      <SkipBack size={18} />
-                    </button>
-
-                    <button
-                      className={`ctrl-btn play-main ${isPlaying ? 'playing' : ''}`}
-                      onClick={togglePlay}
-                      title="Play / Pause (Spacebar)"
-                    >
-                      {isPlaying ? <Pause size={22} /> : <Play size={22} className="play-icon-offset" />}
-                    </button>
-
-                    <button
-                      className="ctrl-btn secondary"
-                      onClick={goNext}
-                      title="Next Track (Right Arrow)"
-                    >
-                      <SkipForward size={18} />
-                    </button>
-                  </div>
-
-                  <div className="deck-aux-controls">
-                    {/* Volume Mute */}
-                    <button
-                      className="ctrl-btn aux-btn"
-                      onClick={toggleMute}
-                      title={isMuted ? 'Unmute' : 'Mute'}
-                    >
-                      {isMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
-                    </button>
-
-                    {/* External Spotify Link */}
-                    <a
-                      href={activeTrack.spotifyUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="ctrl-btn aux-btn spotify-link"
-                      title="Listen on Spotify"
-                    >
-                      <ExternalLink size={16} />
-                      <span className="spotify-label">Spotify</span>
-                    </a>
-                  </div>
-                </div>
-
-              </div>
+              <span className="time-val">{formatTime(duration)}</span>
             </div>
           </div>
+
+          {/* Right: Soundwave Equalizer, Mute & External Link */}
+          <div className="hud-aux-panel">
+            {/* Pulsing Visualizer Equalizer */}
+            <div className={`hud-soundwave ${isPlaying ? 'is-active' : ''}`}>
+              <span className="eq-bar eq-1" />
+              <span className="eq-bar eq-2" />
+              <span className="eq-bar eq-3" />
+              <span className="eq-bar eq-4" />
+              <span className="eq-bar eq-5" />
+            </div>
+
+            {/* Mute Button */}
+            <button 
+              className="hud-aux-btn"
+              onClick={() => setIsMuted(!isMuted)}
+              title={isMuted ? 'Unmute' : 'Mute'}
+            >
+              {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
+
+            {/* Spotify Link */}
+            <a 
+              href={activeTrack.spotifyUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hud-aux-btn spotify"
+              title="Open in Spotify"
+            >
+              <ExternalLink size={15} />
+              <span>Spotify</span>
+            </a>
+          </div>
+
         </div>
 
-        {/* ═══════ The Record Crate (Flippable Vinyl Rack) ═══════ */}
-        <section className="record-crate-section">
-          <div className="crate-header">
-            <div className="crate-title-row">
-              <Disc size={18} className="crate-icon" />
-              <h3 className="crate-title">Flip the Vinyl Crate</h3>
-            </div>
-            <span className="crate-count">6 RECORDS IN ROTATION</span>
-          </div>
+        {/* Keyboard Controls Hint */}
+        <div className="hud-keyboard-hints">
+          <span><kbd>←</kbd> PREV</span>
+          <span><kbd>SPACE</kbd> {isPlaying ? 'PAUSE' : 'PLAY'}</span>
+          <span><kbd>→</kbd> NEXT</span>
+        </div>
+      </footer>
 
-          <div className="crate-grid">
-            {musicTracks.map((track, idx) => {
-              const isCurrent = idx === activeIndex;
-
-              return (
-                <motion.div
-                  key={track.id}
-                  className={`crate-record-card ${isCurrent ? 'is-on-deck' : ''}`}
-                  onClick={() => goToTrack(idx)}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-                >
-                  <div className="crate-cover-wrap">
-                    <img
-                      src={track.coverUrl}
-                      alt={track.title}
-                      className="crate-cover-img"
-                    />
-                    {isCurrent && (
-                      <div className="on-deck-badge">
-                        <span className="deck-dot" />
-                        <span>ON DECK</span>
-                      </div>
-                    )}
-                    <div className="crate-record-sheen" />
-                  </div>
-
-                  <div className="crate-info">
-                    <div className="crate-track-num">SIDE 0{idx + 1}</div>
-                    <h4 className="crate-track-title">{track.title}</h4>
-                    <p className="crate-track-artist">{track.artist}</p>
-                    <span className="crate-track-vibe">{track.vibe}</span>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-        </section>
-
-      </div>
-    </div>
+    </main>
   );
 }
