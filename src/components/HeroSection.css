@@ -2,6 +2,8 @@
   position: relative;
   width: 100%;
   background-color: #fcfaf4;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.11) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -171,6 +173,8 @@
 /* ─── Bottom section ─── */
 .prasha-hero-bottom {
   background-color: #e4f1f5;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
   width: 100%;
   padding: 100px 60px 140px 60px;
   display: flex;
@@ -185,11 +189,12 @@
 }
 
 .prasha-photo-container {
-  background-color: var(--bg-card);
+  background-color: #ffffff;
   padding: 12px;
   border-radius: var(--radius-card);
   transform: rotate(-2deg);
   position: relative;
+  z-index: 2;
   width: 340px;
   flex-shrink: 0;
   transition: transform 0.5s var(--ease-spring), box-shadow 0.5s ease;
@@ -326,287 +331,6 @@
   }
 }
 
-/* ==========================================================================
-   Figma Canvas Blueprint & Interactive Hero Additions
-   ========================================================================== */
 
-/* ─── Dot Grid Canvas Background ─── */
-.canvas-grid-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 2;
-  background-image: radial-gradient(rgba(0, 0, 0, 0.12) 1.2px, transparent 1.2px);
-  background-size: 24px 24px;
-  animation: fadeInGrid 0.3s ease forwards;
-}
 
-@keyframes fadeInGrid {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ─── Top Live Status & Clock Pill ─── */
-.hero-status-pill {
-  position: relative;
-  z-index: 20;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 6px 18px;
-  margin-bottom: 30px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 9999px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-  font-family: var(--font-mono, monospace);
-  font-size: 0.72rem;
-  letter-spacing: 0.05em;
-  user-select: none;
-  transition: transform 0.25s var(--ease-spring), box-shadow 0.25s ease;
-}
-
-.hero-status-pill:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07);
-}
-
-.status-ping-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-}
-
-.status-ping-radar {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-  position: absolute;
-  left: 0;
-  animation: pingPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-.status-ping-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #10b981;
-}
-
-@keyframes pingPulse {
-  75%, 100% {
-    transform: scale(2.6);
-    opacity: 0;
-  }
-}
-
-.status-title {
-  font-weight: 700;
-  color: #10b981;
-  text-transform: uppercase;
-}
-
-.status-separator {
-  color: rgba(0, 0, 0, 0.2);
-  font-weight: 300;
-}
-
-.status-location-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--text-muted, #555555);
-}
-
-.status-loc {
-  font-weight: 600;
-  color: var(--text, #111111);
-}
-
-.status-time {
-  color: var(--text-muted, #777777);
-  font-weight: 500;
-}
-
-/* ─── Dynamic Focus / Role Flipper ─── */
-.hero-role-flipper-row {
-  margin-top: 14px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  font-size: 1.05rem;
-  color: var(--text-muted, #666666);
-}
-
-.flipper-prefix,
-.flipper-suffix {
-  font-weight: 400;
-}
-
-.flipper-pill-viewport {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 170px;
-  height: 32px;
-}
-
-.flipper-active-role {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 12px;
-  background: rgba(255, 74, 33, 0.08);
-  color: var(--accent, #ff4a21);
-  border: 1px solid rgba(255, 74, 33, 0.2);
-  border-radius: 9999px;
-  font-family: var(--font-sans, sans-serif);
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-
-/* ─── Floating Figma Canvas Toolbar ─── */
-.figma-hero-toolbar {
-  position: relative;
-  z-index: 30;
-  margin-top: 48px;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 9999px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-  user-select: none;
-}
-
-.toolbar-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  background: transparent;
-  border: none;
-  border-radius: 9999px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text, #222222);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.toolbar-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  transform: translateY(-1px);
-}
-
-.toolbar-btn:active {
-  transform: scale(0.96);
-}
-
-.toolbar-btn.is-active {
-  background: var(--text, #111111);
-  color: #ffffff;
-}
-
-.toolbar-btn.primary-action {
-  background: rgba(255, 74, 33, 0.1);
-  color: var(--accent, #ff4a21);
-  border: 1px dashed rgba(255, 74, 33, 0.3);
-}
-
-.toolbar-btn.primary-action:hover {
-  background: var(--accent, #ff4a21);
-  color: #ffffff;
-  border-style: solid;
-}
-
-.toolbar-divider {
-  width: 1px;
-  height: 20px;
-  background: rgba(0, 0, 0, 0.1);
-  margin: 0 2px;
-}
-
-.toolbar-btn.scroll-action {
-  color: var(--text-muted, #555555);
-}
-
-.toolbar-btn.scroll-action:hover {
-  color: var(--text, #111111);
-}
-
-/* ─── User-Dropped Interactive Stickers ─── */
-.spawned-sticker {
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  z-index: 100;
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  user-select: none;
-  cursor: grab;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.14), 0 2px 6px rgba(0, 0, 0, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
-  will-change: transform;
-}
-
-.spawned-sticker:active {
-  cursor: grabbing;
-}
-
-@media (max-width: 768px) {
-  .hero-status-pill {
-    padding: 5px 12px;
-    font-size: 0.65rem;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-
-  .status-location-wrap {
-    display: none;
-  }
-
-  .status-separator {
-    display: none;
-  }
-
-  .hero-role-flipper-row {
-    font-size: 0.9rem;
-  }
-
-  .flipper-pill-viewport {
-    min-width: 150px;
-  }
-
-  .figma-hero-toolbar {
-    margin-top: 36px;
-    gap: 4px;
-    padding: 4px 6px;
-  }
-
-  .toolbar-btn {
-    padding: 6px 10px;
-    font-size: 0.68rem;
-  }
-}
 
