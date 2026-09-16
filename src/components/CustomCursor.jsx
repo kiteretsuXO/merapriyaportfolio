@@ -193,8 +193,8 @@ export default function CustomCursor() {
           {/* Element Inspection Tag (appears on hover) */}
           {hoverSpec && !isInputMode && (
             <div className="figma-spec-pill">
-              <span className="spec-label">{hoverSpec.label}</span>
-              <span className="spec-dims">
+              <span className="figma-spec-label">{hoverSpec.label}</span>
+              <span className="figma-spec-dims">
                 {hoverSpec.width} × {hoverSpec.height}
               </span>
             </div>
